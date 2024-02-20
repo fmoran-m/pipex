@@ -1,6 +1,6 @@
 #include "pipex.h"
 
-char *get_path(char *argv, char **env)
+static char *get_path(char *argv, char **env) //Controlar el liberaciones y perror cuando no hay access
 {
 	int		i;
 	char	**path;
@@ -27,37 +27,47 @@ char *get_path(char *argv, char **env)
 	return (search);
 }
 
+static void	check_files(char *infile, char *outfile)
+{
+	if (access(infile, F_OK) != 0
+			|| access(outfile, F_OK) != 0)
+	{
+		perror("Access error");
+		exit(-1);
+	}
+}
+
 int main(int argc, char **argv, char **env)
 {
-	char	**cmd1;
-	char	**cmd2;
-	char	*path1;
-	char	*path2;
+	char	*cmd1;
+	char	*cmd2;
 	pid_t	pid;
-	int		infile;
-	int		outfile;
 	int		fd[2];
+	int		fd_infile;
+	int		fd_outfile;
 
-	if (argc != 3)
+	if (argc != 5)
 	{
 		ft_putendl_fd("Incorrect number of arguments", 2);
 		return (-1);
 	}
-	cmd1 = ft_split(argv[1], ' ');
-	cmd2 = ft_split(argv[2], ' ');
-	path1 = get_path(cmd1[0], env);
-	path2 = get_path(cmd2[0], env);
-	infile = open("infile.txt", O_RDWR)
-	outfile = open("outfile.txt", O_RDWR);
-	dup2(infile , 0); //Cogemos la info del infile
+	check_files(argv[1], argv[4]);
+	cmd1 = get_path(argv[2], env);
+	cmd2 = get_path(argv[3], env);
+	fd_infile = open(argv[1], O_RDWR);
+	fd_outfile = open(argv[4], O_RDWR);
+	if (fd_infile == -1)
+		return (-1);
+	dup2(fd_infile, 0);
 	pipe(fd);
 	pid = fork();
 	if (pid == 0)
 	{
 		close(fd[0]);
-		dup2(fd[1], 1); //Vamos a ejecutar el comando. Printeamos en el fd[1] en lugar de en la salida estándar
+		dup2(fd[1], 1);
 		close(fd[1]);
-		execve(path1, cmd1, env);
+		char **final_cmd1 = ft_split(argv[2], ' ');
+		execve(cmd1, final_cmd1, env);
 	}
 	else
 	{
@@ -65,14 +75,12 @@ int main(int argc, char **argv, char **env)
 		pid = fork();
 		if (pid == 0)
 		{
-			dup2(fd[0], 0); //Recogemos de la pipe
+			dup2(fd[0], 0);
 			close(fd[0]);
-			dup2(outfile, 1); //Lo llevamos al archivo final
-			execve(path2, cmd2, env);
+			dup2(fd_outfile, 1);
+			char **final_cmd2 = ft_split(argv[3], ' ');
+			execve(cmd2, final_cmd2, env);
 		}
-		else
-			close(fd[0]);
-
 	}
 	return 0;
 }
