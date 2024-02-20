@@ -39,8 +39,7 @@ static void	check_files(char *infile, char *outfile)
 
 int main(int argc, char **argv, char **env)
 {
-	char	*cmd1;
-	char	*cmd2;
+	char	*cmd;
 	pid_t	pid;
 	int		fd[2];
 	int		fd_infile;
@@ -52,8 +51,6 @@ int main(int argc, char **argv, char **env)
 		return (-1);
 	}
 	check_files(argv[1], argv[4]);
-	cmd1 = get_path(argv[2], env);
-	cmd2 = get_path(argv[3], env);
 	fd_infile = open(argv[1], O_RDWR);
 	fd_outfile = open(argv[4], O_RDWR);
 	if (fd_infile == -1)
@@ -66,8 +63,9 @@ int main(int argc, char **argv, char **env)
 		close(fd[0]);
 		dup2(fd[1], 1);
 		close(fd[1]);
-		char **final_cmd1 = ft_split(argv[2], ' ');
-		execve(cmd1, final_cmd1, env);
+		char **final_cmd = ft_split(argv[2], ' ');
+		cmd = get_path(argv[2], env);
+		execve(cmd, final_cmd, env);
 	}
 	else
 	{
@@ -78,8 +76,9 @@ int main(int argc, char **argv, char **env)
 			dup2(fd[0], 0);
 			close(fd[0]);
 			dup2(fd_outfile, 1);
-			char **final_cmd2 = ft_split(argv[3], ' ');
-			execve(cmd2, final_cmd2, env);
+			char **final_cmd = ft_split(argv[3], ' ');
+			cmd = get_path(argv[3], env);
+			execve(cmd, final_cmd, env);
 		}
 	}
 	return 0;
