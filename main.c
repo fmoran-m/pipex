@@ -9,10 +9,15 @@ static char *get_path(char *argv, char **env) //Controlar el liberaciones y perr
 	char	*command;
 
 	i = 0;
-	command = ft_strjoin("/", argv);
-	if (!command)
-		return(NULL);
-	while (env[i] && (ft_strncmp(env[i], "PATH=", 5)))
+	if (ft_strrchr(argv, '/'))
+		command = ft_strrchr(argv, '/');
+	else
+	{
+		command = ft_strjoin("/", argv);
+		if (!command)
+			return(NULL);
+	}
+	while (env[i] && (ft_strncmp(env[i], "PATH=", 5))) //Controlar también con la ruta absoluta
 		i++;
 	if (!env[i])
 		return(free_command(command));
@@ -40,7 +45,6 @@ static t_file	*open_files(char *infile, char *outfile)
 	t_file	*files;
 
 	if (access(infile, F_OK) != 0)
-	//		|| access(outfile, F_OK) != 0)
 	{
 		perror("Access error");
 		exit(-1);
@@ -97,21 +101,21 @@ static void	create_wrchild(int *fd, char *argv, t_file *files, char **env)
 
 static void create_rdchild(int *fd, char *argv, t_file *files, char **env)
 {
-	char	**final_cmd;
-	char	*cmd;
+	char	**cmd;
+	char	*path;
 
 	if (dup2(fd[0], 0) == -1)
 		free_files(files, "Dup error");
 	close(fd[0]);
 	if (dup2(files->fd_outfile, 1) == -1)
 		free_files(files, "Dup error");
-	final_cmd = ft_split(argv, ' ');
-	if (!final_cmd)
-		free_files(files, "Allocation error");
-	cmd = get_path(argv, env);
+	cmd = ft_split(argv, ' ');
 	if (!cmd)
+		free_files(files, "Allocation error");
+	path = get_path(argv, env);
+	if (!path)
 		free_files(files, "Env error");
-	execve(cmd, final_cmd, env);
+	execve(path, cmd, env);
 }
 
 int main(int argc, char **argv, char **env)
