@@ -20,7 +20,7 @@ OBJS = ${SRC:.c=.o}
 
 $(NAME): $(OBJS) $(HEADER)
 		@$(LM) $(LIBFTDIR)
-		$(CC) -o $(NAME) $(CFLAGS) -fsanitize=address $(OBJS) $(LIBFT)
+		$(CC) -o $(NAME) $(CFLAGS) $(OBJS) $(LIBFT)
 
 all: $(NAME)
 

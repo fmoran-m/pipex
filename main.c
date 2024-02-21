@@ -24,7 +24,7 @@ static char *get_path(char *argv, char **env) //Controlar el liberaciones y perr
 	search = ft_strjoin(path[i], command);
 	if (!search)
 		return (free_path(command, path));
-	while (path[i] && access(search, F_OK) != 0)
+	while (path[i] && access(search, X_OK) != 0)
 	{
 		i++;
 		free(search);
@@ -39,8 +39,8 @@ static t_file	*open_files(char *infile, char *outfile)
 {
 	t_file	*files;
 
-	if (access(infile, F_OK) != 0
-			|| access(outfile, F_OK) != 0)
+	if (access(infile, F_OK) != 0)
+	//		|| access(outfile, F_OK) != 0)
 	{
 		perror("Access error");
 		exit(-1);
@@ -58,7 +58,7 @@ static t_file	*open_files(char *infile, char *outfile)
 		free(files);
 		exit(-1);
 	}
-	files->fd_outfile = open(outfile, O_RDWR);
+	files->fd_outfile = open(outfile, O_RDWR | O_CREAT, 0777);
 	if (files->fd_infile == -1)
 	{
 		perror("Open error");
@@ -100,10 +100,10 @@ static void create_rdchild(int *fd, char *argv, t_file *files, char **env)
 	char	**final_cmd;
 	char	*cmd;
 
-	if (dup2(fd[0], 0) == -1);
+	if (dup2(fd[0], 0) == -1)
 		free_files(files, "Dup error");
 	close(fd[0]);
-	if (dup2(files->fd_outfile, 1) == -1);
+	if (dup2(files->fd_outfile, 1) == -1)
 		free_files(files, "Dup error");
 	final_cmd = ft_split(argv, ' ');
 	if (!final_cmd)
@@ -135,7 +135,7 @@ int main(int argc, char **argv, char **env)
 	{
 		close(fd[1]);
 		pid = fork();
-		if (!pid)
+		if (pid == -1)
 			free_files(files, "Pid error");
 		if (pid == 0)
 		create_rdchild(fd, argv[3], files, env);
