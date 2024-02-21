@@ -9,4 +9,7 @@ typedef struct s_files
 	int	fd_infile;
 	int	fd_outfile;
 } t_file;
+void	free_files(t_file *files, char *error);
+void	*free_command(char *command);
+void	*free_path(char *command, char **path);
 #endif

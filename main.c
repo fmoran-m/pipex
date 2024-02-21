@@ -10,19 +10,27 @@ static char *get_path(char *argv, char **env) //Controlar el liberaciones y perr
 
 	i = 0;
 	command = ft_strjoin("/", argv);
+	if (!command)
+		return(NULL);
 	while (env[i] && (ft_strncmp(env[i], "PATH=", 5)))
 		i++;
 	if (!env[i])
-		exit(-1);
+		return(free_command(command));
 	temp = env[i] + 5;
 	path = ft_split(temp, ':'); //Free
+	if (!path)
+		return(free_command(command));
 	i = 0;
 	search = ft_strjoin(path[i], command);
+	if (!search)
+		return (free_path(command, path));
 	while (path[i] && access(search, F_OK) != 0)
 	{
 		i++;
 		free(search);
 		search = ft_strjoin(path[i], command);
+		if(!search)
+			return(free_path(command, path));
 	}
 	return (search);
 }
@@ -75,10 +83,15 @@ static void	create_wrchild(int *fd, char *argv, t_file *files, char **env)
 	char	*cmd;
 
 	close(fd[0]);
-	dup2(fd[1], 1);
+	if(dup2(fd[1], 1) == -1)
+		free_files(files, "Dup error");
 	close(fd[1]);
 	final_cmd = ft_split(argv, ' ');
+	if (!final_cmd)
+		free_files(files, "Allocation error");
 	cmd = get_path(argv, env);
+	if (!cmd)
+		free_files(files, "Env error");
 	execve(cmd, final_cmd, env);
 }
 
@@ -87,13 +100,20 @@ static void create_rdchild(int *fd, char *argv, t_file *files, char **env)
 	char	**final_cmd;
 	char	*cmd;
 
-	dup2(fd[0], 0);
+	if (dup2(fd[0], 0) == -1);
+		free_files(files, "Dup error");
 	close(fd[0]);
-	dup2(files->fd_outfile, 1);
+	if (dup2(files->fd_outfile, 1) == -1);
+		free_files(files, "Dup error");
 	final_cmd = ft_split(argv, ' ');
+	if (!final_cmd)
+		free_files(files, "Allocation error");
 	cmd = get_path(argv, env);
+	if (!cmd)
+		free_files(files, "Env error");
 	execve(cmd, final_cmd, env);
 }
+
 int main(int argc, char **argv, char **env)
 {
 	pid_t	pid;
@@ -102,15 +122,21 @@ int main(int argc, char **argv, char **env)
 
 	argc_control(argc);
 	files = open_files(argv[1], argv[4]);
-	dup2(files->fd_infile, 0);
-	pipe(fd);
+	if(dup2(files->fd_infile, 0) == -1)
+		free_files(files, "Dup error");
+	if(pipe(fd) == -1)
+		free_files(files, "Pipe error");
 	pid = fork();
+	if (pid == -1)
+		free_files(files, "Pid error");
 	if (pid == 0)
 		create_wrchild(fd, argv[2], files, env);
 	else
 	{
 		close(fd[1]);
 		pid = fork();
+		if (!pid)
+			free_files(files, "Pid error");
 		if (pid == 0)
 		create_rdchild(fd, argv[3], files, env);
 	}
