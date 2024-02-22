@@ -14,7 +14,7 @@ INCLUDES = pipex.h
 
 RM = rm -f
 
-SRC = main.c free_functions.c
+SRC = main.c free_functions.c childs.c path.c pipex_utils.c
 
 OBJS = ${SRC:.c=.o}
 
