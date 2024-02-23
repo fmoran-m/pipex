@@ -1,29 +1,13 @@
 #include "pipex.h"
 
-void	free_files(t_file *files, char *error)
+void	free_exit_global(t_global *global)
 {
-	free(files);
-	perror(error);
+	close(global->fd_infile);
+	close(global->fd_outfile);
+	if (global->path1)
+		free(global->path1);
+	if (global->path2)
+		free(global->path1);
+	free(global);
 	exit(-1);
-}
-
-void	*free_command(char *command)
-{
-	free(command);
-	return(NULL);
-}
-
-void	*free_path(char *command, char **path)
-{
-	int	i;
-
-	i = 0;
-	while(path[i])
-	{
-		free(path[i]);
-		i++;
-	}
-	free(path);
-	free(command);
-	return(NULL);
 }

@@ -1,16 +1,19 @@
 #include "pipex.h"
 
-static char	*get_command(char *argv)
+static char	*get_command(char *argv, t_global *global)
 {
 	char	*command;
 	
 	command = ft_strjoin("/", argv);
 	if (!command)
-		return(NULL);
+	{
+		ft_putendl_fd("Memory allocation error", 2);
+		free_exit_global(global);
+	}
 	return (command);
 }
 
-char *get_path(char *argv, char **env) //Controlar el liberaciones y perror cuando no hay access
+char *get_path(char *argv, char **env, t_global *global) //Controlar el liberaciones y perror cuando no hay access
 {
 	int		i;
 	char	**path;
@@ -21,17 +24,23 @@ char *get_path(char *argv, char **env) //Controlar el liberaciones y perror cuan
 	i = 0;
 	if (access(argv, X_OK) == 0)
 		return (argv);
-	command = get_command(argv);
-	if (!command)
-		return(NULL);
+	command = get_command(argv, global);
 	while (env[i] && (ft_strncmp(env[i], "PATH=", 5))) //Controlar también con la ruta absoluta
 		i++;
 	if (!env[i])
-		return(free_command(command));
+	{
+		perror("Path not founded");
+		free(command);
+		free_exit_global(global);
+	}
 	temp = env[i] + 5;
 	path = ft_split(temp, ':'); //Free
 	if (!path)
-		return(free_command(command));
+	{
+		ft_putendl_fd("Memory allocation error", 2);
+		free(command);
+		free_exit_global(global);
+	}
 	i = 0;
 	while (1)
 	{
@@ -39,7 +48,18 @@ char *get_path(char *argv, char **env) //Controlar el liberaciones y perror cuan
 			break;
 		search = ft_strjoin(path[i], command);
 		if (!search)
-			return (free_path(command, path));
+		{
+			ft_putendl_fd("Memory allocation error", 2);
+			free(command);
+			i = 0;
+			while(path[i])
+			{
+				free(path[i]);
+				i++;
+			}
+			free(path);
+			free_exit_global(global);
+		}
 		if (access(search, X_OK) == 0)
 			break;
 		i++;
@@ -47,7 +67,23 @@ char *get_path(char *argv, char **env) //Controlar el liberaciones y perror cuan
 	if (!path[i])
 	{
 		perror("Command does not exist");
-		exit(-1);
+		free(command);
+		i = 0;
+		while(path[i])
+		{
+			free(path[i]);
+			i++;
+		}
+		free(path);
+		free_exit_global(global);
 	}
+	free(command);
+	i = 0;
+	while(path[i])
+	{
+		free(path[i]);
+		i++;
+	}
+	free(path);
 	return (search);
 }

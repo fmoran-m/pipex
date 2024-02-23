@@ -1,27 +1,38 @@
 #include "pipex.h"
 
-t_file	*open_files(char *infile, char *outfile)
+int	open_infile(char *infile, t_global *global)
 {
-	t_file	*files;
+	int	fd;
 
 	if (access(infile, F_OK) != 0)
 	{
+		free(global);
 		perror("Access error");
 		exit(-1);
 	}
-	files = ft_calloc(1, sizeof(t_file));
-	if (!files)
+	fd = open(infile, O_RDWR);
+	if (fd == -1)
 	{
-		ft_putendl_fd("Memory allocation error", 2);
+		free(global);
+		perror("Open error");
 		exit(-1);
 	}
-	files->fd_infile = open(infile, O_RDWR);
-	if (files->fd_infile == -1)
-		free_files(files, "Open error");
-	files->fd_outfile = open(outfile, O_RDWR | O_TRUNC | O_CREAT, 0777);
-	if (files->fd_outfile == -1)
-		free_files(files, "Open error");
-	return(files);
+	return (fd);
+}
+
+int open_outfile(char *outfile, t_global *global)
+{
+	int	fd;
+
+	fd = open(outfile, O_RDWR | O_TRUNC | O_CREAT, 0777);
+	if (fd == -1)
+	{
+		close(global->fd_outfile);
+		free(global);
+		perror("Open error");
+		exit(-1);
+	}
+	return (fd);
 }
 
 void	argc_control(int argc)
