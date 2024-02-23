@@ -4,14 +4,9 @@ static char	*get_command(char *argv)
 {
 	char	*command;
 	
-	if (ft_strrchr(argv, '/'))
-		command = ft_strrchr(argv, '/');
-	else
-	{
-		command = ft_strjoin("/", argv);
-		if (!command)
-			return(NULL);
-	}
+	command = ft_strjoin("/", argv);
+	if (!command)
+		return(NULL);
 	return (command);
 }
 
@@ -24,6 +19,8 @@ char *get_path(char *argv, char **env) //Controlar el liberaciones y perror cuan
 	char	*command;
 
 	i = 0;
+	if (access(argv, X_OK) == 0)
+		return (argv);
 	command = get_command(argv);
 	if (!command)
 		return(NULL);
@@ -36,16 +33,21 @@ char *get_path(char *argv, char **env) //Controlar el liberaciones y perror cuan
 	if (!path)
 		return(free_command(command));
 	i = 0;
-	search = ft_strjoin(path[i], command);
-	if (!search)
-		return (free_path(command, path));
-	while (path[i] && access(search, X_OK) != 0)
+	while (1)
 	{
-		i++;
-		free(search);
+		if (!path[i])
+			break;
 		search = ft_strjoin(path[i], command);
-		if(!search)
-			return(free_path(command, path));
+		if (!search)
+			return (free_path(command, path));
+		if (access(search, X_OK) == 0)
+			break;
+		i++;
+	}
+	if (!path[i])
+	{
+		perror("Command does not exist");
+		exit(-1);
 	}
 	return (search);
 }
