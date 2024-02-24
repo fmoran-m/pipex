@@ -8,7 +8,7 @@ CC = cc
 
 LM = make -C
 
-#CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 
 INCLUDES = pipex.h
 
@@ -20,7 +20,7 @@ OBJS = ${SRC:.c=.o}
 
 $(NAME): $(OBJS) $(HEADER)
 		@$(LM) $(LIBFTDIR)
-		$(CC) -o $(NAME) $(CFLAGS) $(OBJS) $(LIBFT)
+		$(CC) -o $(NAME) $(CFLAGS) -fsanitize=address $(OBJS) $(LIBFT)
 
 all: $(NAME)
 

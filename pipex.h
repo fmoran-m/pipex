@@ -11,9 +11,10 @@ typedef struct s_global
 	char	*path1;
 	char	*path2;
 } t_global;
-void	*free_command(char *command);
+void	command_exit(char *command, t_global *global);
 void	free_exit_global(t_global *global);
-void	*free_path(char *command, char **path);
+void	path_exit(char **path, char *command, t_global *global, char *error);
+void	free_path(char **path);
 void	argc_control(int argc);
 char	*get_path(char *argv, char **env, t_global *global);
 void	create_wrchild(int *fd, char *argv, t_global *global, char **env);
