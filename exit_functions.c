@@ -35,15 +35,15 @@ void	path_exit(char **path, char *command, t_global *global, char *error)
 	free_exit_global(global);
 }
 
-void	free_path(char **path)
+void	close_exit(int *fd, t_global *global)	
 {
-	int	i;
+	close(fd[0]);
+	close(fd[1]);
+	free_exit_global(global);
+}
 
-	i = 0;
-		while(path[i])
-	{
-		free(path[i]);
-		i++;
-	}
-	free(path);
+void	close_fdzero_exit(int *fd, t_global *global)
+{
+	close(fd[0]);
+	free_exit_global(global);
 }

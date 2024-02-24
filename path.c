@@ -1,5 +1,18 @@
 #include "pipex.h"
 
+void	free_path(char **path)
+{
+	int	i;
+
+	i = 0;
+		while(path[i])
+	{
+		free(path[i]);
+		i++;
+	}
+	free(path);
+}
+
 static char	*get_command(char *argv, t_global *global)
 {
 	char	*command;

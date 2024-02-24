@@ -21,4 +21,6 @@ void	create_wrchild(int *fd, char *argv, t_global *global, char **env);
 void	create_rdchild(int *fd, char *argv, t_global *global, char **env);
 int		open_infile(char *infile, t_global *global);
 int		open_outfile(char *outfile, t_global *global);
+void	close_exit(int *fd, t_global *global);
+void	close_fdzero_exit(int *fd, t_global *global);
 #endif

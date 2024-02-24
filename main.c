@@ -33,11 +33,7 @@ int main(int argc, char **argv, char **env)
 		free_exit_global(global);
 	pid = fork();
 	if (pid == -1)
-	{
-		close(fd[0]);
-		close(fd[1]);
-		free_exit_global(global);
-	}
+		close_exit(fd, global);
 	if (pid == 0)
 		create_wrchild(fd, argv[2], global, env);
 	else
@@ -45,10 +41,7 @@ int main(int argc, char **argv, char **env)
 		close(fd[1]);
 		pid = fork();
 		if (pid == -1)
-		{
-			close(fd[0]);
-			free_exit_global(global);
-		}
+			close_fdzero_exit(fd, global);
 		if (pid == 0)
 		create_rdchild(fd, argv[3], global, env);
 	}
