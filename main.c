@@ -23,8 +23,10 @@ int main(int argc, char **argv, char **env)
 {
 	pid_t		pid;
 	int			fd[2];
+	int			status;
 	t_global	*global;
 
+	status = 0;
 	argc_control(argc);
 	global = global_init(argv, env);
 	if(dup2(global->fd_infile, 0) == -1)
@@ -38,6 +40,7 @@ int main(int argc, char **argv, char **env)
 		create_wrchild(fd, argv[2], global, env);
 	else
 	{
+		//wait(&status);
 		close(fd[1]);
 		pid = fork();
 		if (pid == -1)
@@ -45,5 +48,11 @@ int main(int argc, char **argv, char **env)
 		if (pid == 0)
 		create_rdchild(fd, argv[3], global, env);
 	}
+	wait(&status);
+	close(global->fd_infile);
+	close(global->fd_outfile);
+	free(global->path1);
+	free(global->path2);
+	free(global);
 	return (0);
 }

@@ -3,6 +3,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <sys/wait.h>
 # include "libft/libft.h"
 typedef struct s_global
 {

@@ -75,6 +75,11 @@ char *get_path(char *argv, char **env, t_global *global) //Controlar el liberaci
 	char	*search;
 	char	*command;
 
+	if(!*argv)
+	{
+		ft_putendl_fd("Command does not exist: No such file or directory", 2);
+		free_exit_global(global);
+	}
 	if (access(argv, X_OK) == 0)
 		return (argv);
 	command = get_command(argv, global);
