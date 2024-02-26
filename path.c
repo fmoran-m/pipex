@@ -16,13 +16,28 @@ void	free_path(char **path)
 static char	*get_command(char *argv, t_global *global)
 {
 	char	*command;
+	char	**temp;
 	
-	command = ft_strjoin("/", argv);
+	temp = ft_split(argv, ' ');
+	if (!temp)
+	{
+		ft_putendl_fd("Memory allocation error", 2);
+		free_exit_global(global);
+		exit(1);
+	}
+	command = ft_strjoin("/", temp[0]);
 	if (!command)
 	{
 		ft_putendl_fd("Memory allocation error", 2);
 		free_exit_global(global);
 	}
+	int	i = 0;
+	while(temp[i])
+	{
+		free(temp[i]);
+		i++;
+	}
+	free(temp);
 	return (command);
 }
 

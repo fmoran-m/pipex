@@ -43,5 +43,6 @@ void	create_rdchild(int *fd, char *argv, t_global *global, char **env)
 		ft_putendl_fd("Memory allocation error", 2);
 		free_exit_global(global);
 	}
-	execve(global->path2, cmd, env);
+	if(execve(global->path2, cmd, env) == -1)
+		exit(1);
 }

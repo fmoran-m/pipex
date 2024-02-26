@@ -8,14 +8,14 @@ int	open_infile(char *infile, t_global *global)
 	{
 		free(global);
 		perror("Access error");
-		exit(-1);
+		exit(1);
 	}
 	fd = open(infile, O_RDWR);
 	if (fd == -1)
 	{
 		free(global);
 		perror("Open error");
-		exit(-1);
+		exit(1);
 	}
 	return (fd);
 }
@@ -30,7 +30,7 @@ int open_outfile(char *outfile, t_global *global)
 		close(global->fd_outfile);
 		free(global);
 		perror("Open error");
-		exit(-1);
+		exit(1);
 	}
 	return (fd);
 }
@@ -40,6 +40,6 @@ void	argc_control(int argc)
 	if (argc != 5)
 	{
 		ft_putendl_fd("Incorrect number of arguments", 2);
-		exit (-1);
+		exit (1);
 	}
 }

@@ -8,7 +8,7 @@ static t_global	*global_init(char **argv, char **env)
 	if (!global)
 	{
 		ft_putendl_fd("Memory allocation error", 2);
-		exit(-1);
+		exit(1);
 	}
 	global->path1 = NULL;
 	global->path2 = NULL;
@@ -40,7 +40,7 @@ int main(int argc, char **argv, char **env)
 		create_wrchild(fd, argv[2], global, env);
 	else
 	{
-		//wait(&status);
+		wait(&status);
 		close(fd[1]);
 		pid = fork();
 		if (pid == -1)

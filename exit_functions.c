@@ -9,7 +9,7 @@ void	free_exit_global(t_global *global)
 	if (global->path2)
 		free(global->path1);
 	free(global);
-	exit(-1);
+	exit(1);
 }
 
 void	command_exit(char *command, t_global *global)
