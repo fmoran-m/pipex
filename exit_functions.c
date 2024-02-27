@@ -1,49 +1,42 @@
 #include "pipex.h"
 
-void	free_exit_global(t_global *global)
+void	free_exit(int *pipex, char *path, int file_fd, char *error)
 {
-	close(global->fd_infile);
-	close(global->fd_outfile);
-	if (global->path1)
-		free(global->path1);
-	if (global->path2)
-		free(global->path1);
-	free(global);
+	perror(error);
+	if (pipex && pipex[0] != -1)
+		close(pipex[0]);
+	if (pipex && pipex[1] != -1)
+		close(pipex[1]);
+	if (path)
+		free(path);
+	if (file_fd && file_fd != -1)
+		close(file_fd);
 	exit(1);
 }
 
-void	command_exit(char *command, t_global *global)
+void	free_exit_err(int *pipex, char *path, int file_fd, char *error)
 {
-	perror("Path not founded");
-	free(command);
-	free_exit_global(global);
+	ft_putendl_fd(error, 2);
+	if (pipex && pipex[0] != -1)
+		close(pipex[0]);
+	if (pipex && pipex[1] != -1)
+		close(pipex[1]);
+	if (path)
+		free(path);
+	if (file_fd && file_fd != -1)
+		close(file_fd);
+	exit(1);
 }
 
-void	path_exit(char **path, char *command, t_global *global, char *error)
+void	free_matrix(char **matrix)
 {
-	int	i;
+	int i;
 
 	i = 0;
-	perror(error);
-	free(command);
-	while (path[i])
+	while(matrix[i])
 	{
-		free(path[i]);
+		free(matrix[i]);
 		i++;
 	}
-	free(path);
-	free_exit_global(global);
-}
-
-void	close_exit(int *fd, t_global *global)	
-{
-	close(fd[0]);
-	close(fd[1]);
-	free_exit_global(global);
-}
-
-void	close_fdzero_exit(int *fd, t_global *global)
-{
-	close(fd[0]);
-	free_exit_global(global);
+	free(matrix);
 }

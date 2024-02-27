@@ -1,61 +1,41 @@
 #include "pipex.h"
 
-void	free_path(char **path)
-{
-	int	i;
-
-	i = 0;
-		while(path[i])
-	{
-		free(path[i]);
-		i++;
-	}
-	free(path);
-}
-
-static char	*get_command(char *argv, t_global *global)
+static char	*get_command(char *argv, int file_fd, int *pipex)
 {
 	char	*command;
 	char	**temp;
 	
 	temp = ft_split(argv, ' ');
 	if (!temp)
-	{
-		ft_putendl_fd("Memory allocation error", 2);
-		free_exit_global(global);
-		exit(1);
-	}
+		free_exit(pipex, NULL, file_fd, NULL);
 	command = ft_strjoin("/", temp[0]);
 	if (!command)
 	{
-		ft_putendl_fd("Memory allocation error", 2);
-		free_exit_global(global);
+		free_matrix(temp);
+		free_exit(pipex, NULL, file_fd, NULL);
 	}
-	int	i = 0;
-	while(temp[i])
-	{
-		free(temp[i]);
-		i++;
-	}
-	free(temp);
+	free_matrix(temp);
 	return (command);
 }
 
-static char *get_path_env(char **env, char *command, t_global *global)
+static char *get_path_env(char **env, char *command, int file_fd, int *pipex)
 {
 	int		i;
-	char	*temp;
+	char	*mod_env;
 
 	i = 0;
 	while (env[i] && (ft_strncmp(env[i], "PATH=", 5))) //Controlar también con la ruta absoluta
 		i++;
 	if (!env[i])
-		command_exit(command, global);
-	temp = env[i] + 5;
-	return(temp);
+	{
+		free(command);
+		free_exit(pipex, NULL, file_fd, "Path not founded");
+	}
+	mod_env = env[i] + 5;
+	return(mod_env);
 }
 
-static char	*get_def_path(char **path, char *command, t_global *global)
+static char	*get_def_path(char **path, char *command, int file_fd, int *pipex)
 {
 	int		i;
 	int		found;
@@ -67,7 +47,11 @@ static char	*get_def_path(char **path, char *command, t_global *global)
 	{
 		search = ft_strjoin(path[i], command);
 		if (!search)
-			path_exit(path, command, global, "Memory allocation error");
+		{
+			free_matrix(path);
+			free(command);
+			free_exit(pipex, NULL, file_fd, NULL);
+		}
 		if (access(search, X_OK) == 0)
 			found = 1;
 		else
@@ -77,13 +61,15 @@ static char	*get_def_path(char **path, char *command, t_global *global)
 		}
 	}
 	if (!found)
-		path_exit(path, command, global, "Command does not exist");
-	free(command);
-	free_path(path);
+	{
+		free_matrix(path);
+		free(command);
+		free_exit(pipex, NULL, file_fd, "Command does not exist");
+	}
 	return (search);
 }
 
-char *get_path(char *argv, char **env, t_global *global) //Controlar el liberaciones y perror cuando no hay access
+char *get_path(char *argv, char **env, int file_fd, int *pipex)
 {
 	char	**path;
 	char	*temp;
@@ -91,17 +77,20 @@ char *get_path(char *argv, char **env, t_global *global) //Controlar el liberaci
 	char	*command;
 
 	if(!*argv)
-	{
-		ft_putendl_fd("Command does not exist: No such file or directory", 2);
-		free_exit_global(global);
-	}
+		free_exit_err(pipex, NULL, file_fd, CMD_ERR);
 	if (access(argv, X_OK) == 0)
 		return (argv);
-	command = get_command(argv, global);
-	temp = get_path_env(env, command, global);
+	command = get_command(argv, file_fd, pipex);
+	temp = get_path_env(env, command, file_fd, pipex);
 	path = ft_split(temp, ':'); //Free
 	if (!path)
-		command_exit(command, global);
-	search = get_def_path(path, command, global);
+	{
+		free(command);
+		free(temp);
+		free_exit(pipex, NULL, file_fd, NULL);
+	}
+	search = get_def_path(path, command, file_fd, pipex);
+	free(command);
+	free_matrix(path);
 	return (search);
 }

@@ -5,23 +5,17 @@
 # include <unistd.h>
 # include <sys/wait.h>
 # include "libft/libft.h"
-typedef struct s_global
-{
-	int		fd_infile;
-	int		fd_outfile;
-	char	*path1;
-	char	*path2;
-} t_global;
-void	command_exit(char *command, t_global *global);
-void	free_exit_global(t_global *global);
-void	path_exit(char **path, char *command, t_global *global, char *error);
-void	free_path(char **path);
+
+# define CMD_ERR "Command does not exist: No such file or directory"
 void	argc_control(int argc);
-char	*get_path(char *argv, char **env, t_global *global);
-void	create_wrchild(int *fd, char *argv, t_global *global, char **env);
-void	create_rdchild(int *fd, char *argv, t_global *global, char **env);
-int		open_infile(char *infile, t_global *global);
-int		open_outfile(char *outfile, t_global *global);
-void	close_exit(int *fd, t_global *global);
-void	close_fdzero_exit(int *fd, t_global *global);
+void	exec_first_process(int *pipex, char **argv, char **env);
+void	exec_first_process(int *pipex, char **argv, char **env);
+void	exec_last_process(int *pipex, char **argv, char **env);
+int		open_infile(char *infile, int *pipex, char *path);
+int		open_outfile(char *outfile, int *pipex, char *path);
+void	exec_cmd(char *path, char *argv, char **env);
+void	free_exit(int *pipex, char *path, int file_fd, char *error);
+void	free_exit_err(int *pipex, char *path, int file_fd, char *error);
+void	free_matrix(char **matrix);
+char 	*get_path(char *argv, char **env, int file_fd, int *pipex);
 #endif
