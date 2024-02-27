@@ -1,31 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   childs.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/27 15:41:32 by fmoran-m          #+#    #+#             */
+/*   Updated: 2024/02/27 17:05:31 by fmoran-m         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
-int	open_infile(char *infile, int *pipex, char *path)
+int	open_infile(char *infile, int *pipex)
 {
 	int	fd;
 
 	if (access(infile, F_OK) != 0)
-		free_exit(pipex, path, 0, "Access error");
+		free_exit(pipex, NULL, 0, ACC_ERR);
 	fd = open(infile, O_RDWR);
 	if (fd == -1)
-		free_exit(pipex, path, 0, "Open error");
+		free_exit(pipex, NULL, 0, OPEN_ERR);
 	return (fd);
 }
 
-int	open_outfile(char *outfile, int *pipex, char *path)
+int	open_outfile(char *outfile, int *pipex)
 {
 	int	fd;
 
 	fd = open(outfile, O_RDWR | O_TRUNC | O_CREAT, 0777);
 	if (fd == -1)
-		free_exit(pipex, path, 0, "Open error");
+		free_exit(pipex, NULL, 0, OPEN_ERR);
 	return (fd);
 }
 
-
 void	exec_cmd(char *path, char *argv, char **env)
 {
-	char **cmd;
+	char	**cmd;
 
 	cmd = ft_split(argv, ' ');
 	if (!cmd)
@@ -54,8 +65,8 @@ void	exec_first_process(int *pipex, char **argv, char **env)
 	}
 	if (pid == 0)
 	{
-		path = get_path(argv[2], env, pipex);
-		fd_infile = open_infile(argv[1], pipex, path);
+		fd_infile = open_infile(argv[1], pipex);
+		path = get_path(argv[2], env, pipex, fd_infile);
 		close(pipex[0]);
 		if (dup2(fd_infile, 0) == -1)
 			free_exit(pipex, path, fd_infile, NULL);
@@ -83,8 +94,8 @@ void	exec_last_process(int *pipex, char **argv, char **env)
 	}
 	if (pid == 0)
 	{
-		path = get_path(argv[3], env, pipex);
-		fd_outfile = open_outfile(argv[4], pipex, path);
+		fd_outfile = open_outfile(argv[4], pipex);
+		path = get_path(argv[3], env, pipex, fd_outfile);
 		if (dup2(pipex[0], 0) == -1)
 			free_exit(pipex, path, fd_outfile, NULL);
 		close(pipex[0]);

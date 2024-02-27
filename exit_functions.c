@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit_functions.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/27 15:41:35 by fmoran-m          #+#    #+#             */
+/*   Updated: 2024/02/27 16:51:32 by fmoran-m         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
 void	free_exit(int *pipex, char *path, int file_fd, char *error)
@@ -14,18 +26,18 @@ void	free_exit(int *pipex, char *path, int file_fd, char *error)
 	exit(1);
 }
 
-void	exit_path(char **path, char *command, int *pipex)
+void	exit_path(char **path, char *command, int *pipex, int fd_file)
 {
 	free_matrix(path);
 	free(command);
-	free_exit(pipex, NULL, 0, "Command does not exist");
+	free_exit(pipex, NULL, fd_file, CMD_ERR);
 }
 
-void	exit_path_err(char **path, char *command, int *pipex)
+void	exit_path_err(char **path, char *command, int *pipex, int fd_file)
 {
 	free_matrix(path);
 	free(command);
-	free_exit_err(pipex, NULL, 0, "Memory allocation error");
+	free_exit_err(pipex, NULL, fd_file, MEM_ERR);
 }
 
 void	free_exit_err(int *pipex, char *path, int file_fd, char *error)
@@ -44,10 +56,10 @@ void	free_exit_err(int *pipex, char *path, int file_fd, char *error)
 
 void	free_matrix(char **matrix)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while(matrix[i])
+	while (matrix[i])
 	{
 		free(matrix[i]);
 		i++;
