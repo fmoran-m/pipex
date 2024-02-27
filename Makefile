@@ -6,7 +6,7 @@
 #    By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/27 15:41:45 by fmoran-m          #+#    #+#              #
-#    Updated: 2024/02/27 15:42:00 by fmoran-m         ###   ########.fr        #
+#    Updated: 2024/02/27 20:06:09 by fmoran-m         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,11 +24,17 @@ CFLAGS = -Wall -Wextra -Werror
 
 INCLUDES = pipex.h
 
+INCLUDES_BONUS = pipex_bonus.h
+
 RM = rm -f
 
-SRC = main.c exit_functions.c childs.c path.c 
+SRC = main.c exit_functions.c childs.c path.c open_files.c
 
 OBJS = ${SRC:.c=.o}
+
+BONUS = main_bonus.c exit_functions_bonus.c childs_bonus.c path_bonus.c open_files_bonus.c
+
+BONUS_OBJS = ${BONUS:.c=.o}
 
 $(NAME): $(OBJS) $(HEADER)
 		@$(LM) $(LIBFTDIR)
@@ -39,8 +45,13 @@ all: $(NAME)
 %.o:%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+bonus: $(BONUS_OBJS) $(INCLUDE_BONUS)
+		$(RM) $(OBJS)
+		@$(LM) $(LIBFTDIR)
+		$(CC) -o $(NAME) $(CFLAGS) -fsanitize=address $(BONUS_OBJS) $(LIBFT)
+
 clean:
-		@$(RM) $(OBJS)
+		@$(RM) $(BONUS_OBJS) $(OBJS)
 		@cd $(LIBFTDIR) && make clean
 
 fclean: clean

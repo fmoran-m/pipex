@@ -1,38 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   childs.c                                           :+:      :+:    :+:   */
+/*   childs_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:32 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/27 19:57:42 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/02/27 21:50:12 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
-
-int	open_infile(char *infile, int *pipex)
-{
-	int	fd;
-
-	if (access(infile, F_OK) != 0)
-		free_exit(pipex, NULL, 0, ACC_ERR);
-	fd = open(infile, O_RDWR);
-	if (fd == -1)
-		free_exit(pipex, NULL, 0, OPEN_ERR);
-	return (fd);
-}
-
-int	open_outfile(char *outfile, int *pipex)
-{
-	int	fd;
-
-	fd = open(outfile, O_RDWR | O_TRUNC | O_CREAT, 0777);
-	if (fd == -1)
-		free_exit(pipex, NULL, 0, OPEN_ERR);
-	return (fd);
-}
+#include "pipex_bonus.h"
 
 void	exec_cmd(char *path, char *argv, char **env)
 {
@@ -50,7 +28,33 @@ void	exec_cmd(char *path, char *argv, char **env)
 	}
 }
 
-void	exec_first_process(int *pipex, char **argv, char **env)
+int	open_here_doc(char *limiter, int *pipex)
+{
+	int	fd;
+	char *buffer;
+
+	buffer = NULL;
+	fd = open(".here_doc.txt", O_CREAT | O_WRONLY | O_APPEND, 0644);
+	if (fd == -1)
+	{
+		close(pipex[0]);
+		close(pipex[1]);
+		perror(OPEN_ERR);
+		exit(1);
+	}
+	while(1)
+	{
+		ft_printf("> ");
+		buffer = get_next_line(0);
+		write(fd, buffer, ft_strlen(buffer));
+		if (!ft_strncmp(buffer, limiter, ft_strlen(limiter)))
+			break;
+	}
+	exit (0);
+	return(fd);
+}
+
+void	exec_first_process(int *pipex, char **argv, char **env, int here_doc)
 {
 	pid_t	pid;
 	char	*path;
@@ -65,8 +69,11 @@ void	exec_first_process(int *pipex, char **argv, char **env)
 	}
 	if (pid == 0)
 	{
-		fd_infile = open_infile(argv[1], pipex);
-		path = get_path(argv[2], env, pipex, fd_infile);
+		if (here_doc == 1)
+			fd_infile = open_here_doc(argv[2], pipex);
+		else
+			fd_infile = open_infile(argv[1], pipex);
+		path = get_path(argv[2 + here_doc], env, pipex, fd_infile);
 		close(pipex[0]);
 		if (dup2(fd_infile, 0) == -1)
 			free_exit(pipex, path, fd_infile, NULL);
@@ -74,7 +81,7 @@ void	exec_first_process(int *pipex, char **argv, char **env)
 		if (dup2(pipex[1], 1) == -1)
 			free_exit(pipex, path, fd_infile, NULL);
 		close(pipex[0]);
-		exec_cmd(path, argv[2], env);
+		exec_cmd(path, argv[2 + here_doc], env);
 	}
 }
 
@@ -101,6 +108,7 @@ void	exec_last_process(int *pipex, char **argv, char **env)
 		close(pipex[0]);
 		if (dup2(fd_outfile, 1) == -1)
 			free_exit(pipex, path, fd_outfile, NULL);
+		close(fd_outfile);
 		exec_cmd(path, argv[3], env);
 	}
 }
