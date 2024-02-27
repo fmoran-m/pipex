@@ -54,7 +54,7 @@ void	exec_first_process(int *pipex, char **argv, char **env)
 	}
 	if (pid == 0)
 	{
-		path = get_path(argv[2], env, fd_infile, pipex);
+		path = get_path(argv[2], env, pipex);
 		fd_infile = open_infile(argv[1], pipex, path);
 		close(pipex[0]);
 		if (dup2(fd_infile, 0) == -1)
@@ -83,7 +83,7 @@ void	exec_last_process(int *pipex, char **argv, char **env)
 	}
 	if (pid == 0)
 	{
-		path = get_path(argv[3], env, fd_outfile, pipex);
+		path = get_path(argv[3], env, pipex);
 		fd_outfile = open_outfile(argv[4], pipex, path);
 		if (dup2(pipex[0], 0) == -1)
 			free_exit(pipex, path, fd_outfile, NULL);
