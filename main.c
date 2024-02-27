@@ -24,5 +24,7 @@ int	main(int argc, char **argv, char **env)
 	wait(&status);
 	exec_last_process(pipex, argv, env);
 	wait(&status);
+	if (status != 0)
+		return (1);
 	return (0);
 }
