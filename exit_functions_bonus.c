@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit_functions.c                                   :+:      :+:    :+:   */
+/*   exit_functions_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:35 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 17:44:58 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/02/28 17:45:03 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 void	free_exit(int *pipex, char *path, int file_fd, char *error)
 {
