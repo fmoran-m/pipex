@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:42 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 20:25:15 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/02/28 21:05:37 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,5 @@ void	exit_path_err(char **path, char *command, int *pipex, int file_fd);
 void	free_exit_err(int *pipex, char *path, int file_fd, char *error);
 int     check_here_doc(char **argv);
 void	open_here_doc(char *limiter, int *pipex);
+void	pipe_loop(int *pipex, char **argv, char **env, int argc);
 #endif

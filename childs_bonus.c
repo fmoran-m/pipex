@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:32 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 20:35:55 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/02/28 22:13:54 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ void	exec_first_process(int *pipex, char **argv, char **env, int here_doc)
 			unlink(".here_doc.txt");
 		if (dup2(pipex[1], 1) == -1)
 			free_exit(pipex, path, fd_infile, NULL);
-		close(pipex[0]);
+		close(pipex[1]);
 		exec_cmd(path, argv[2 + here_doc], env);
 	}
 }

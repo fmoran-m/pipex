@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:38 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 20:29:51 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/02/28 22:33:40 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,31 @@ int	check_here_doc(char **argv)
 	return (flag);
 }
 
+void	pipe_loop(int *pipex, char **argv, char **env, int argc)
+{
+	int		i;
+	char	*path;
+	pid_t	pid;
+	int		status;
+
+	i = 3;
+	while(i < argc - 2)
+	{
+		pid = fork();
+		if (pid == 0)
+		{
+			path = get_path(argv[i], env, pipex, 0);
+			dup2(pipex[0], 0);
+			close(pipex[0]);
+			dup2(pipex[1], 1);
+			close(pipex[1]);
+			exec_cmd(path, argv[i], env);
+		}
+		wait(&status);
+		i++;
+	}
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	int	pipex[2];
@@ -54,6 +79,7 @@ int	main(int argc, char **argv, char **env)
 	}
 	exec_first_process(pipex, argv, env, here_doc);
 	wait(&status);
+	pipe_loop(pipex, argv, env, argc);
 	exec_last_process(pipex, argv, env, argc);
 	wait(&status);
 	if (status != 0)
