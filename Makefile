@@ -6,7 +6,7 @@
 #    By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/27 15:41:45 by fmoran-m          #+#    #+#              #
-#    Updated: 2024/02/27 20:06:09 by fmoran-m         ###   ########.fr        #
+#    Updated: 2024/02/28 16:57:06 by fmoran-m         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,8 @@ BONUS = main_bonus.c exit_functions_bonus.c childs_bonus.c path_bonus.c open_fil
 
 BONUS_OBJS = ${BONUS:.c=.o}
 
-$(NAME): $(OBJS) $(HEADER)
+$(NAME): $(OBJS) $(INCLUDES)
+		$(RM) $(BONUS_OBJS)
 		@$(LM) $(LIBFTDIR)
 		$(CC) -o $(NAME) $(CFLAGS) -fsanitize=address $(OBJS) $(LIBFT)
 

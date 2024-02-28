@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:40 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/27 19:57:10 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/02/28 16:54:45 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ char	*get_path(char *argv, char **env, int *pipex, int fd_file)
 	command = get_command(argv, pipex, fd_file);
 	temp = get_path_env(env, command, pipex, fd_file);
 	path = ft_split(temp, ':');
+	ft_putendl_fd(path[0], 2);
 	if (!path)
 	{
 		free(command);

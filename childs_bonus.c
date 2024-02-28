@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:32 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/27 21:50:12 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/02/28 16:42:31 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ void	exec_cmd(char *path, char *argv, char **env)
 	cmd = ft_split(argv, ' ');
 	if (!cmd)
 		free_exit(NULL, path, 0, NULL);
+//	ft_putendl_fd(path, 2);
+	//ft_putendl_fd(cmd[0], 2);
 	if (execve(path, cmd, env) == -1)
 	{
 		perror(NULL);
@@ -28,7 +30,7 @@ void	exec_cmd(char *path, char *argv, char **env)
 	}
 }
 
-int	open_here_doc(char *limiter, int *pipex)
+void	open_here_doc(char *limiter, int *pipex)
 {
 	int	fd;
 	char *buffer;
@@ -50,8 +52,7 @@ int	open_here_doc(char *limiter, int *pipex)
 		if (!ft_strncmp(buffer, limiter, ft_strlen(limiter)))
 			break;
 	}
-	exit (0);
-	return(fd);
+	close(fd);
 }
 
 void	exec_first_process(int *pipex, char **argv, char **env, int here_doc)
@@ -70,7 +71,10 @@ void	exec_first_process(int *pipex, char **argv, char **env, int here_doc)
 	if (pid == 0)
 	{
 		if (here_doc == 1)
-			fd_infile = open_here_doc(argv[2], pipex);
+		{
+			open_here_doc(argv[2], pipex);
+			fd_infile = open_infile(".here_doc.txt", pipex);
+		}
 		else
 			fd_infile = open_infile(argv[1], pipex);
 		path = get_path(argv[2 + here_doc], env, pipex, fd_infile);
@@ -101,14 +105,14 @@ void	exec_last_process(int *pipex, char **argv, char **env)
 	}
 	if (pid == 0)
 	{
-		fd_outfile = open_outfile(argv[4], pipex);
-		path = get_path(argv[3], env, pipex, fd_outfile);
+		fd_outfile = open_outfile(argv[5], pipex);
+		path = get_path(argv[4], env, pipex, fd_outfile);
 		if (dup2(pipex[0], 0) == -1)
 			free_exit(pipex, path, fd_outfile, NULL);
 		close(pipex[0]);
 		if (dup2(fd_outfile, 1) == -1)
 			free_exit(pipex, path, fd_outfile, NULL);
 		close(fd_outfile);
-		exec_cmd(path, argv[3], env);
+		exec_cmd(path, argv[4], env);
 	}
 }
