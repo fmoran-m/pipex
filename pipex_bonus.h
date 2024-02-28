@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:42 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 18:06:05 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/02/28 20:25:15 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 
 void	argc_control(int argc, int here_doc);
 void	exec_first_process(int *pipex, char **argv, char **env, int here_doc);
-void	exec_last_process(int *pipex, char **argv, char **env);
+void	exec_last_process(int *pipex, char **argv, char **env, int argc);
 int		open_infile(char *infile, int *pipex);
 int		open_outfile(char *outfile, int *pipex);
 void	exec_cmd(char *path, char *argv, char **env);

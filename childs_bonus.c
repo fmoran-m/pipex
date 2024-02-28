@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:32 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 18:10:15 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/02/28 20:35:55 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,8 @@ void	exec_first_process(int *pipex, char **argv, char **env, int here_doc)
 		if (dup2(fd_infile, 0) == -1)
 			free_exit(pipex, path, fd_infile, NULL);
 		close(fd_infile);
+		if (here_doc)
+			unlink(".here_doc.txt");
 		if (dup2(pipex[1], 1) == -1)
 			free_exit(pipex, path, fd_infile, NULL);
 		close(pipex[0]);
@@ -109,7 +111,7 @@ void	exec_first_process(int *pipex, char **argv, char **env, int here_doc)
 	}
 }
 
-void	exec_last_process(int *pipex, char **argv, char **env)
+void	exec_last_process(int *pipex, char **argv, char **env, int argc)
 {
 	pid_t	pid;
 	char	*path;
@@ -125,13 +127,13 @@ void	exec_last_process(int *pipex, char **argv, char **env)
 	}
 	if (pid == 0)
 	{
-		fd_outfile = open_outfile(argv[5], pipex);
-		path = get_path(argv[4], env, pipex, fd_outfile);
+		fd_outfile = open_outfile(argv[argc - 1], pipex);
+		path = get_path(argv[argc - 2], env, pipex, fd_outfile);
 		if (dup2(pipex[0], 0) == -1)
 			free_exit(pipex, path, fd_outfile, NULL);
 		close(pipex[0]);
 		if (dup2(fd_outfile, 1) == -1)
 			free_exit(pipex, path, fd_outfile, NULL);
-		exec_cmd(path, argv[4], env);
+		exec_cmd(path, argv[argc - 2], env);
 	}
 }

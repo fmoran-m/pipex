@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:38 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 17:56:47 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/02/28 20:29:51 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ void	argc_control(int argc, int here_doc)
 {
 	if (here_doc != 0 && argc < 6)
 	{
-		exit (1);
 		ft_putendl_fd(ARGC_ERR, 2);
+		exit (1);
 	}
 	else
 	{
@@ -54,7 +54,7 @@ int	main(int argc, char **argv, char **env)
 	}
 	exec_first_process(pipex, argv, env, here_doc);
 	wait(&status);
-	exec_last_process(pipex, argv, env);
+	exec_last_process(pipex, argv, env, argc);
 	wait(&status);
 	if (status != 0)
 		return (1);
