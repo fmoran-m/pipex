@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:38 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 22:33:40 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/02/29 16:53:36 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,21 +45,27 @@ void	pipe_loop(int *pipex, char **argv, char **env, int argc)
 	char	*path;
 	pid_t	pid;
 	int		status;
+	int		new[2];
 
 	i = 3;
 	while(i < argc - 2)
 	{
+		pipe(new);
+		path = get_path(argv[i], env, pipex, 0);
+		close(pipex[1]);
 		pid = fork();
 		if (pid == 0)
 		{
-			path = get_path(argv[i], env, pipex, 0);
+			close(new[0]);
 			dup2(pipex[0], 0);
-			close(pipex[0]);
-			dup2(pipex[1], 1);
 			close(pipex[1]);
+			dup2(new[1], 1);
+			close(new[1]);
 			exec_cmd(path, argv[i], env);
 		}
 		wait(&status);
+		pipex[0] = new[0];
+		pipex[1] = new[1];
 		i++;
 	}
 }
@@ -81,6 +87,7 @@ int	main(int argc, char **argv, char **env)
 	wait(&status);
 	pipe_loop(pipex, argv, env, argc);
 	exec_last_process(pipex, argv, env, argc);
+	ft_putendl_fd("entra\n", 2);
 	wait(&status);
 	if (status != 0)
 		return (1);
