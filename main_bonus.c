@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:38 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/03/01 21:01:31 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/03/01 21:07:31 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	check_here_doc(char **argv)
 	return (flag);
 }
 
-void	pipe_loop(int *pipex, char **argv, char **env, int argc)
+void	pipe_loop(int *pipex, char **argv, char **env, int argc, int here_doc)
 {
 	int		i;
 	char	*path;
@@ -48,6 +48,7 @@ void	pipe_loop(int *pipex, char **argv, char **env, int argc)
 	int		new[2];
 
 	i = 3;
+	argc = argc - here_doc;
 	while(i < argc - 2)
 	{
 		pipe(new);
@@ -85,7 +86,7 @@ int	main(int argc, char **argv, char **env)
 	}
 	exec_first_process(pipex, argv, env, here_doc);
 	wait(&status);
-	pipe_loop(pipex, argv, env, argc);
+	pipe_loop(pipex, argv, env, argc, here_doc);
 	exec_last_process(pipex, argv, env, argc);
 	wait(&status);
 	if (status != 0)
