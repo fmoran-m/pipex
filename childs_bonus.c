@@ -49,6 +49,18 @@ void	exec_cmd(char *path, char *argv, char **env)
 		exit(1);
 	}
 }
+/*
+static void	remove_n(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] && str[i] != '\n')
+		i++;
+	if (str[i] == '\n')
+		str[i] = 0;
+}
+*/
 
 void	open_here_doc(char *limiter, int *pipex)
 {
@@ -64,13 +76,12 @@ void	open_here_doc(char *limiter, int *pipex)
 		perror(OPEN_ERR);
 		exit(1);
 	}
-	while(1)
+	while(ft_strncmp(buffer, limiter, ft_strlen(limiter)))
 	{
 		ft_printf("> ");
 		buffer = get_next_line(0);
-		write(fd, buffer, ft_strlen(buffer));
-		if (!ft_strncmp(buffer, limiter, ft_strlen(limiter)))
-			break;
+		if (ft_strncmp(buffer, limiter, ft_strlen(limiter)))
+			write(fd, buffer, ft_strlen(buffer));
 	}
 	close(fd);
 }

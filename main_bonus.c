@@ -34,7 +34,7 @@ int	check_here_doc(char **argv)
 	int	flag;
 
 	flag = 0;
-	if (!ft_strncmp(argv[1], "here__doc", 9))
+	if (!ft_strncmp(argv[1], "here_doc", 8))
 		flag = 1;
 	return (flag);
 }
@@ -87,7 +87,6 @@ int	main(int argc, char **argv, char **env)
 	wait(&status);
 	pipe_loop(pipex, argv, env, argc);
 	exec_last_process(pipex, argv, env, argc);
-	ft_putendl_fd("entra\n", 2);
 	wait(&status);
 	if (status != 0)
 		return (1);
