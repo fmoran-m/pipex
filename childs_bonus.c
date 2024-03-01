@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:32 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 22:13:54 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/03/01 20:49:17 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,25 +49,17 @@ void	exec_cmd(char *path, char *argv, char **env)
 		exit(1);
 	}
 }
-/*
-static void	remove_n(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] && str[i] != '\n')
-		i++;
-	if (str[i] == '\n')
-		str[i] = 0;
-}
-*/
 
 void	open_here_doc(char *limiter, int *pipex)
 {
 	int	fd;
 	char *buffer;
+	int	limiter_len;
+	int	buffer_len;
 
 	buffer = NULL;
+	buffer_len = 0;
+	limiter_len = ft_strlen(limiter);
 	fd = open(".here_doc.txt", O_CREAT | O_WRONLY | O_APPEND, 0644);
 	if (fd == -1)
 	{
@@ -76,13 +68,17 @@ void	open_here_doc(char *limiter, int *pipex)
 		perror(OPEN_ERR);
 		exit(1);
 	}
-	while(ft_strncmp(buffer, limiter, ft_strlen(limiter)))
+	while(ft_strncmp(buffer, limiter, limiter_len) || limiter_len + 1 != buffer_len)
 	{
+		if (buffer)
+			free(buffer);
 		ft_printf("> ");
 		buffer = get_next_line(0);
-		if (ft_strncmp(buffer, limiter, ft_strlen(limiter)))
-			write(fd, buffer, ft_strlen(buffer));
+		buffer_len = ft_strlen(buffer);
+		if ((ft_strncmp(buffer, limiter, limiter_len) || limiter_len + 1 != buffer_len))
+			write(fd, buffer, buffer_len);
 	}
+	free(buffer);
 	close(fd);
 }
 
@@ -112,9 +108,9 @@ void	exec_first_process(int *pipex, char **argv, char **env, int here_doc)
 		close(pipex[0]);
 		if (dup2(fd_infile, 0) == -1)
 			free_exit(pipex, path, fd_infile, NULL);
-		close(fd_infile);
 		if (here_doc)
 			unlink(".here_doc.txt");
+		close(fd_infile);
 		if (dup2(pipex[1], 1) == -1)
 			free_exit(pipex, path, fd_infile, NULL);
 		close(pipex[1]);
