@@ -87,7 +87,7 @@ int	main(int argc, char **argv, char **env)
 	exec_first_process(pipex, argv, env, here_doc);
 	wait(&status);
 	pipe_loop(pipex, argv, env, argc, here_doc);
-	exec_last_process(pipex, argv, env, argc);
+	exec_last_process(pipex, argv, env, argc, here_doc);
 	wait(&status);
 	if (status != 0)
 		return (1);

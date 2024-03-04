@@ -28,9 +28,9 @@
 
 void	argc_control(int argc, int here_doc);
 void	exec_first_process(int *pipex, char **argv, char **env, int here_doc);
-void	exec_last_process(int *pipex, char **argv, char **env, int argc);
+void	exec_last_process(int *pipex, char **argv, char **env, int argc, int here_doc);
 int		open_infile(char *infile, int *pipex);
-int		open_outfile(char *outfile, int *pipex);
+int		open_outfile(char *outfile, int *pipex, int here_doc);
 void	exec_cmd(char *path, char *argv, char **env);
 void	free_exit(int *pipex, char *path, int file_fd, char *error);
 void	free_exit_err(int *pipex, char *path, int file_fd, char *error);

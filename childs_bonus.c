@@ -24,13 +24,22 @@ int	open_infile(char *infile, int *pipex)
 	return (fd);
 }
 
-int	open_outfile(char *outfile, int *pipex)
+int	open_outfile(char *outfile, int *pipex, int here_doc)
 {
 	int	fd;
 
-	fd = open(outfile, O_RDWR | O_TRUNC | O_CREAT, 0777);
-	if (fd == -1)
-		free_exit(pipex, NULL, 0, OPEN_ERR);
+	if (here_doc == 1)
+	{
+		fd = open(outfile, O_RDWR | O_APPEND, O_CREAT, 0777);
+		if (fd == -1)
+			free_exit(pipex, NULL, 0, OPEN_ERR);
+	}
+	else
+	{
+		fd = open(outfile, O_RDWR | O_TRUNC | O_CREAT, 0777);
+		if (fd == -1)
+			free_exit(pipex, NULL, 0, OPEN_ERR);
+	}
 	return (fd);
 }
 
@@ -118,7 +127,7 @@ void	exec_first_process(int *pipex, char **argv, char **env, int here_doc)
 	}
 }
 
-void	exec_last_process(int *pipex, char **argv, char **env, int argc)
+void	exec_last_process(int *pipex, char **argv, char **env, int argc, int here_doc)
 {
 	pid_t	pid;
 	char	*path;
@@ -134,7 +143,7 @@ void	exec_last_process(int *pipex, char **argv, char **env, int argc)
 	}
 	if (pid == 0)
 	{
-		fd_outfile = open_outfile(argv[argc - 1], pipex);
+		fd_outfile = open_outfile(argv[argc - 1], pipex, here_doc);
 		path = get_path(argv[argc - 2], env, pipex, fd_outfile);
 		if (dup2(pipex[0], 0) == -1)
 			free_exit(pipex, path, fd_outfile, NULL);
