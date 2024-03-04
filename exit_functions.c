@@ -26,18 +26,18 @@ void	free_exit(int *pipex, char *path, int file_fd, char *error)
 	exit(1);
 }
 
-void	exit_path(char **path, char *command, int *pipex, int fd_file)
+void	exit_path(char **path, char *command, int *pipex)
 {
 	free_matrix(path);
 	free(command);
-	free_exit(pipex, NULL, fd_file, CMD_ERR);
+	free_exit(pipex, NULL, 0, CMD_ERR);
 }
 
-void	exit_path_err(char **path, char *command, int *pipex, int fd_file)
+void	exit_path_err(char **path, char *command, int *pipex)
 {
 	free_matrix(path);
 	free(command);
-	free_exit_err(pipex, NULL, fd_file, MEM_ERR);
+	free_exit_err(pipex, NULL, 0, MEM_ERR);
 }
 
 void	free_exit_err(int *pipex, char *path, int file_fd, char *error)

@@ -39,7 +39,7 @@ BONUS_OBJS = ${BONUS:.c=.o}
 $(NAME): $(OBJS) $(INCLUDES)
 		$(RM) $(BONUS_OBJS)
 		@$(LM) $(LIBFTDIR)
-		$(CC) -o $(NAME) $(CFLAGS) -fsanitize=address $(OBJS) $(LIBFT)
+		$(CC) -o $(NAME) $(CFLAGS) $(OBJS) $(LIBFT)
 
 all: $(NAME)
 
@@ -49,7 +49,7 @@ all: $(NAME)
 bonus: $(BONUS_OBJS) $(INCLUDE_BONUS)
 		$(RM) $(OBJS)
 		@$(LM) $(LIBFTDIR)
-		$(CC) -o $(NAME) $(CFLAGS) -fsanitize=address $(BONUS_OBJS) $(LIBFT)
+		$(CC) -o $(NAME) $(CFLAGS) $(BONUS_OBJS) $(LIBFT)
 
 clean:
 		@$(RM) $(BONUS_OBJS) $(OBJS)

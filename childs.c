@@ -66,14 +66,14 @@ void	exec_first_process(int *pipex, char **argv, char **env)
 	if (pid == 0)
 	{
 		fd_infile = open_infile(argv[1], pipex);
-		path = get_path(argv[2], env, pipex, fd_infile);
 		close(pipex[0]);
-		if (dup2(fd_infile, 0) == -1)
-			free_exit(pipex, path, fd_infile, NULL);
+		if (dup2(fd_infile, STDIN_FILENO) == -1)
+			free_exit(pipex, NULL, fd_infile, NULL);
 		close(fd_infile);
-		if (dup2(pipex[1], 1) == -1)
-			free_exit(pipex, path, fd_infile, NULL);
+		if (dup2(pipex[1], STDOUT_FILENO) == -1)
+			free_exit(pipex, NULL, 0, NULL);
 		close(pipex[1]);
+		path = get_path(argv[2], env, pipex);
 		exec_cmd(path, argv[2], env);
 	}
 }
@@ -95,12 +95,13 @@ void	exec_last_process(int *pipex, char **argv, char **env)
 	if (pid == 0)
 	{
 		fd_outfile = open_outfile(argv[4], pipex);
-		path = get_path(argv[3], env, pipex, fd_outfile);
-		if (dup2(pipex[0], 0) == -1)
-			free_exit(pipex, path, fd_outfile, NULL);
+		if (dup2(pipex[0], STDIN_FILENO) == -1)
+			free_exit(pipex, NULL, fd_outfile, NULL);
 		close(pipex[0]);
-		if (dup2(fd_outfile, 1) == -1)
-			free_exit(pipex, path, fd_outfile, NULL);
+		if (dup2(fd_outfile, STDOUT_FILENO) == -1)
+			free_exit(NULL, NULL, fd_outfile, NULL);
+		close(fd_outfile);
+		path = get_path(argv[3], env, NULL);
 		exec_cmd(path, argv[3], env);
 	}
 }

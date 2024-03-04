@@ -36,8 +36,8 @@ void	exec_cmd(char *path, char *argv, char **env);
 void	free_exit(int *pipex, char *path, int file_fd, char *error);
 void	free_exit_err(int *pipex, char *path, int file_fd, char *error);
 void	free_matrix(char **matrix);
-char	*get_path(char *argv, char **env, int *pipex, int file_fd);
-void	exit_path(char **path, char *command, int *pipex, int file_fd);
-void	exit_path_err(char **path, char *command, int *pipex, int file_fd);
+char	*get_path(char *argv, char **env, int *pipex);
+void	exit_path(char **path, char *command, int *pipex);
+void	exit_path_err(char **path, char *command, int *pipex);
 void	free_exit_err(int *pipex, char *path, int file_fd, char *error);
 #endif
