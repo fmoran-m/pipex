@@ -73,7 +73,7 @@ void	exec_first_process(int *pipex, char **argv, char **env)
 		if (dup2(pipex[1], STDOUT_FILENO) == -1)
 			free_exit(pipex, NULL, 0, NULL);
 		close(pipex[1]);
-		path = get_path(argv[2], env, pipex);
+		path = get_path(argv[2], env, NULL);
 		exec_cmd(path, argv[2], env);
 	}
 }
@@ -88,10 +88,7 @@ void	exec_last_process(int *pipex, char **argv, char **env)
 	fd_outfile = 0;
 	pid = fork();
 	if (pid == -1)
-	{
-		perror(NULL);
-		exit(1);
-	}
+		free_exit(pipex, NULL, 0, NULL);
 	if (pid == 0)
 	{
 		fd_outfile = open_outfile(argv[4], pipex);

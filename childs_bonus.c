@@ -113,16 +113,16 @@ void	exec_first_process(int *pipex, char **argv, char **env, int here_doc)
 		}
 		else
 			fd_infile = open_infile(argv[1], pipex);
-		path = get_path(argv[2 + here_doc], env, pipex, fd_infile);
 		close(pipex[0]);
 		if (dup2(fd_infile, 0) == -1)
-			free_exit(pipex, path, fd_infile, NULL);
+			free_exit(pipex, NULL, fd_infile, NULL);
+		close(fd_infile);
 		if (here_doc)
 			unlink(".here_doc.txt");
-		close(fd_infile);
 		if (dup2(pipex[1], 1) == -1)
-			free_exit(pipex, path, fd_infile, NULL);
+			free_exit(pipex, NULL, 0, NULL);
 		close(pipex[1]);
+		path = get_path(argv[2 + here_doc], env, NULL);
 		exec_cmd(path, argv[2 + here_doc], env);
 	}
 }
@@ -137,19 +137,17 @@ void	exec_last_process(int *pipex, char **argv, char **env, int argc, int here_d
 	fd_outfile = 0;
 	pid = fork();
 	if (pid == -1)
-	{
-		perror(NULL);
-		exit(1);
-	}
+		free_exit(pipex, NULL, 0, NULL);
 	if (pid == 0)
 	{
 		fd_outfile = open_outfile(argv[argc - 1], pipex, here_doc);
-		path = get_path(argv[argc - 2], env, pipex, fd_outfile);
 		if (dup2(pipex[0], 0) == -1)
-			free_exit(pipex, path, fd_outfile, NULL);
+			free_exit(pipex, NULL, fd_outfile, NULL);
 		close(pipex[0]);
 		if (dup2(fd_outfile, 1) == -1)
-			free_exit(pipex, path, fd_outfile, NULL);
+			free_exit(pipex, NULL, fd_outfile, NULL);
+		close(fd_outfile);
+		path = get_path(argv[argc - 2], env, NULL);
 		exec_cmd(path, argv[argc - 2], env);
 	}
 }

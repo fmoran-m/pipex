@@ -51,17 +51,33 @@ void	pipe_loop(int *pipex, char **argv, char **env, int argc, int here_doc)
 	argc = argc - here_doc;
 	while(i < argc - 2)
 	{
-		pipe(new);
+		if (pipe(new) == -1)
+			free_exit(pipex, NULL, 0, NULL);
 		close(pipex[1]);
 		pid = fork();
+		if (pid == -1)
+		{
+			close(new[0]);
+			close(new[1]);
+			free_exit(pipex, NULL, 0, NULL);
+		}
 		if (pid == 0)
 		{
-			path = get_path(argv[i], env, pipex, 0);
 			close(new[0]);
-			dup2(pipex[0], 0);
+			if (dup2(pipex[0], 0) == -1)
+			{
+				close(new[1]);
+				free_exit(pipex, NULL, 0, NULL);
+			}
 			close(pipex[1]);
-			dup2(new[1], 1);
+			if (dup2(new[1], 1) == -1)
+			{
+				close(new[1]);
+				free_exit(pipex, NULL, 0, NULL);
+			}
 			close(new[1]);
+			close(pipex[0]); //OJO CON ESTO, PUEDE ROMPERMELO
+			path = get_path(argv[i], env, NULL);
 			exec_cmd(path, argv[i], env);
 		}
 		wait(&status);
