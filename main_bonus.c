@@ -39,7 +39,7 @@ int	check_here_doc(char **argv)
 	return (flag);
 }
 
-void	pipe_loop(int *pipex, char **argv, char **env, int argc, int here_doc)
+t_global	pipe_loop(t_global global, char **argv, char **env, int argc)
 {
 	int		i;
 	char	*path;
@@ -48,62 +48,62 @@ void	pipe_loop(int *pipex, char **argv, char **env, int argc, int here_doc)
 	int		new[2];
 
 	i = 3;
-	argc = argc - here_doc;
+	argc = argc - global.here_doc;
 	while(i < argc - 2)
 	{
 		if (pipe(new) == -1)
-			free_exit(pipex, NULL, 0, NULL);
-		close(pipex[1]);
+			free_exit(global.pipex, NULL, 0, NULL);
+		close(global.pipex[1]);
 		pid = fork();
 		if (pid == -1)
 		{
 			close(new[0]);
 			close(new[1]);
-			free_exit(pipex, NULL, 0, NULL);
+			free_exit(global.pipex, NULL, 0, NULL);
 		}
 		if (pid == 0)
 		{
 			close(new[0]);
-			if (dup2(pipex[0], 0) == -1)
+			if (dup2(global.pipex[0], 0) == -1)
 			{
 				close(new[1]);
-				free_exit(pipex, NULL, 0, NULL);
+				free_exit(global.pipex, NULL, 0, NULL);
 			}
-			close(pipex[1]);
+			close(global.pipex[1]);
 			if (dup2(new[1], 1) == -1)
 			{
 				close(new[1]);
-				free_exit(pipex, NULL, 0, NULL);
+				free_exit(global.pipex, NULL, 0, NULL);
 			}
 			close(new[1]);
-			close(pipex[0]); //OJO CON ESTO, PUEDE ROMPERMELO
+			close(global.pipex[0]); //OJO CON ESTO, PUEDE ROMPERMELO
 			path = get_path(argv[i], env, NULL);
 			exec_cmd(path, argv[i], env);
 		}
 		wait(&status);
-		pipex[0] = new[0];
-		pipex[1] = new[1];
+		global.pipex[0] = new[0];
+		global.pipex[1] = new[1];
 		i++;
 	}
+	return (global);
 }
 
 int	main(int argc, char **argv, char **env)
 {
-	int	pipex[2];
-	int	status;
-	int	here_doc;
+	int			status;
+	t_global	global;
 
-	here_doc = check_here_doc(argv);
-	argc_control(argc, here_doc);
-	if (pipe(pipex) == -1)
+	global.here_doc = check_here_doc(argv);
+	argc_control(argc, global.here_doc);
+	if (pipe(global.pipex) == -1)
 	{
 		perror(NULL);
 		return (1);
 	}
-	exec_first_process(pipex, argv, env, here_doc);
+	exec_first_process(global, argv, env);
 	wait(&status);
-	pipe_loop(pipex, argv, env, argc, here_doc);
-	exec_last_process(pipex, argv, env, argc, here_doc);
+	global = pipe_loop(global, argv, env, argc);
+	exec_last_process(global, argv, env, argc);
 	wait(&status);
 	if (status != 0)
 		return (1);
