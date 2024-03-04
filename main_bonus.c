@@ -52,11 +52,11 @@ void	pipe_loop(int *pipex, char **argv, char **env, int argc, int here_doc)
 	while(i < argc - 2)
 	{
 		pipe(new);
-		path = get_path(argv[i], env, pipex, 0);
 		close(pipex[1]);
 		pid = fork();
 		if (pid == 0)
 		{
+			path = get_path(argv[i], env, pipex, 0);
 			close(new[0]);
 			dup2(pipex[0], 0);
 			close(pipex[1]);
