@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipe_loop_bonus.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/05 16:24:14 by fmoran-m          #+#    #+#             */
+/*   Updated: 2024/03/05 16:24:15 by fmoran-m         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex_bonus.h"
 
 static void	loop_child(t_global global, t_temp temp, char **argv, char **env)
@@ -8,7 +20,7 @@ static void	loop_child(t_global global, t_temp temp, char **argv, char **env)
 		close(temp.new[1]);
 		free_exit(global.pipex, NULL, 0, NULL);
 	}
-	close(global.pipex[1]);
+	global.pipex[1] = close_bf(global.pipex[1]);
 	if (dup2(temp.new[1], STDOUT_FILENO) == -1)
 	{
 		close(temp.new[1]);
@@ -26,11 +38,11 @@ t_global	pipe_loop(t_global global, char **argv, char **env, int argc)
 
 	temp.i = 3;
 	argc = argc - global.here_doc;
-	while(temp.i < argc - 2)
+	while (temp.i < argc - 2)
 	{
 		if (pipe(temp.new) == -1)
 			free_exit(global.pipex, NULL, 0, NULL);
-		close(global.pipex[1]);
+		global.pipex[1] = close_bf(global.pipex[1]);
 		temp.pid = fork();
 		if (temp.pid == -1)
 		{

@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:40 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 17:16:34 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/03/05 16:23:08 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ char	*get_path(char *argv, char **env, int *pipex)
 	char	*search;
 	char	*command;
 
-	if (!*argv) //Probar en 42
+	if (!*argv)
 		free_exit(pipex, NULL, 0, CMD_ERR);
 	if (access(argv, X_OK) == 0)
 		return (argv);

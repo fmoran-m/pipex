@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:42 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/27 17:06:34 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/03/05 16:24:42 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,5 @@ char	*get_path(char *argv, char **env, int *pipex);
 void	exit_path(char **path, char *command, int *pipex);
 void	exit_path_err(char **path, char *command, int *pipex);
 void	free_exit_err(int *pipex, char *path, int file_fd, char *error);
+int		close_bf(int fd);
 #endif

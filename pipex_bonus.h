@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:42 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/03/01 21:05:21 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/03/05 16:26:00 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,20 +29,21 @@
 
 typedef struct s_global
 {
-	int pipex[2];
+	int	pipex[2];
 	int	here_doc;
-} t_global;
+}	t_global;
 typedef struct s_temp
 {
-	char 	*path;
+	char	*path;
 	pid_t	pid;
 	int		status;
 	int		new[2];
 	int		i;
-} t_temp;
+}	t_temp;
 void		argc_control(int argc, int here_doc);
 void		exec_first_process(t_global global, char **argv, char **env);
-void		exec_last_process(t_global global, char **argv, char **env, int argc);
+void		exec_last_process(t_global global,
+				char **argv, char **env, int argc);
 int			open_infile(char *infile, int *pipex);
 int			open_outfile(char *outfile, int *pipex, int here_doc);
 void		exec_cmd(char *path, char *argv, char **env);
@@ -53,7 +54,8 @@ char		*get_path(char *argv, char **env, int *pipex);
 void		exit_path(char **path, char *command, int *pipex);
 void		exit_path_err(char **path, char *command, int *pipex);
 void		free_exit_err(int *pipex, char *path, int file_fd, char *error);
-int  	   check_here_doc(char **argv);
+int			check_here_doc(char **argv);
 void		open_here_doc(char *limiter, int *pipex);
 t_global	pipe_loop(t_global global, char **argv, char **env, int argc);
+int			close_bf(int fd);
 #endif

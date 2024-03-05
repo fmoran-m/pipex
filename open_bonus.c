@@ -1,4 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   open_bonus.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/05 16:11:05 by fmoran-m          #+#    #+#             */
+/*   Updated: 2024/03/05 16:17:15 by fmoran-m         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex_bonus.h"
+
+int	close_bf(int fd)
+{
+	close(fd);
+	fd = -1;
+	return (fd);
+}
 
 int	open_infile(char *infile, int *pipex)
 {
@@ -33,30 +52,27 @@ int	open_outfile(char *outfile, int *pipex, int here_doc)
 
 void	open_here_doc(char *limiter, int *pipex)
 {
-	int	fd;
-	char *buffer;
-	int	limiter_len;
-	int	buffer_len;
+	int		fd;
+	char	*buffer;
+	int		limiter_len;
+	int		buffer_len;
 
 	buffer = NULL;
 	buffer_len = 0;
 	limiter_len = ft_strlen(limiter);
 	fd = open(".here_doc.txt", O_CREAT | O_WRONLY | O_APPEND, 0644);
 	if (fd == -1)
-	{
-		close(pipex[0]);
-		close(pipex[1]);
-		perror(OPEN_ERR);
-		exit(1);
-	}
-	while(ft_strncmp(buffer, limiter, limiter_len) || limiter_len + 1 != buffer_len)
+		free_exit(pipex, NULL, 0, OPEN_ERR);
+	while (ft_strncmp(buffer, limiter, limiter_len)
+		|| limiter_len + 1 != buffer_len)
 	{
 		if (buffer)
 			free(buffer);
 		ft_printf("> ");
 		buffer = get_next_line(0);
 		buffer_len = ft_strlen(buffer);
-		if ((ft_strncmp(buffer, limiter, limiter_len) || limiter_len + 1 != buffer_len))
+		if ((ft_strncmp(buffer, limiter, limiter_len)
+				|| limiter_len + 1 != buffer_len))
 			write(fd, buffer, buffer_len);
 	}
 	free(buffer);

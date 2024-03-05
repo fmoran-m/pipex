@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:32 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 22:14:28 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/03/05 15:00:12 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,13 @@ void	exec_first_process(int *pipex, char **argv, char **env)
 	if (pid == 0)
 	{
 		fd_infile = open_infile(argv[1], pipex);
-		close(pipex[0]);
+		pipex[0] = close_bf(pipex[0]);
 		if (dup2(fd_infile, STDIN_FILENO) == -1)
 			free_exit(pipex, NULL, fd_infile, NULL);
 		close(fd_infile);
 		if (dup2(pipex[1], STDOUT_FILENO) == -1)
 			free_exit(pipex, NULL, 0, NULL);
-		close(pipex[1]);
+		pipex[1] = close_bf(pipex[1]);
 		path = get_path(argv[2], env, NULL);
 		exec_cmd(path, argv[2], env);
 	}
@@ -62,7 +62,7 @@ void	exec_last_process(int *pipex, char **argv, char **env)
 	char	*path;
 	int		fd_outfile;
 
-	close(pipex[1]);
+	pipex[1] = close_bf(pipex[1]);
 	fd_outfile = 0;
 	pid = fork();
 	if (pid == -1)
@@ -72,7 +72,7 @@ void	exec_last_process(int *pipex, char **argv, char **env)
 		fd_outfile = open_outfile(argv[4], pipex);
 		if (dup2(pipex[0], STDIN_FILENO) == -1)
 			free_exit(pipex, NULL, fd_outfile, NULL);
-		close(pipex[0]);
+		pipex[0] = close_bf(pipex[0]);
 		if (dup2(fd_outfile, STDOUT_FILENO) == -1)
 			free_exit(NULL, NULL, fd_outfile, NULL);
 		close(fd_outfile);
