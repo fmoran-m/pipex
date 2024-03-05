@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:42 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/03/05 16:26:00 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/03/05 17:01:46 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void		exec_first_process(t_global global, char **argv, char **env);
 void		exec_last_process(t_global global,
 				char **argv, char **env, int argc);
 int			open_infile(char *infile, int *pipex);
-int			open_outfile(char *outfile, int *pipex, int here_doc);
+int			open_outfile(char *outfile, int *pipex);
 void		exec_cmd(char *path, char *argv, char **env);
 void		free_exit(int *pipex, char *path, int file_fd, char *error);
 void		free_exit_err(int *pipex, char *path, int file_fd, char *error);

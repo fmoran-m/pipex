@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 16:22:18 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/03/05 16:22:38 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/03/05 16:44:57 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	open_infile(char *infile, int *pipex)
 
 	if (access(infile, F_OK) != 0)
 		free_exit(pipex, NULL, 0, ACC_ERR);
-	fd = open(infile, O_RDONLY, 0664);
+	fd = open(infile, O_RDONLY);
 	if (fd == -1)
 		free_exit(pipex, NULL, 0, OPEN_ERR);
 	return (fd);

@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:32 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/03/05 16:36:15 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/03/05 17:00:41 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	exec_cmd(char *path, char *argv, char **env)
 	}
 }
 
-static void	free_exit_unlink(int *pipex, int fd_infile, int here_doc)
+static void	free_exit_unlink(int *pipex, int file_fd, int here_doc)
 {
 	if (pipex[0] != -1)
 		close(pipex[0]);
@@ -55,7 +55,7 @@ static void	in_child(t_global global, char **argv, char **env)
 		fd_infile = open_infile(argv[1], global.pipex);
 	global.pipex[0] = close_bf(global.pipex[0]);
 	if (dup2(fd_infile, STDIN_FILENO) == -1)
-		free_exit(global.pipex, NULL, fd_infile, NULL);
+		free_exit_unlink(global.pipex, fd_infile, global.here_doc);
 	close(fd_infile);
 	if (global.here_doc)
 		unlink(HDOC_FILE);
@@ -93,7 +93,7 @@ void	exec_last_process(t_global global, char **argv, char **env, int argc)
 		free_exit(global.pipex, NULL, 0, NULL);
 	if (pid == 0)
 	{
-		fd_out = open_outfile(argv[argc - 1], global.pipex, global.here_doc);
+		fd_out = open_outfile(argv[argc - 1], global.pipex);
 		if (dup2(global.pipex[0], STDIN_FILENO) == -1)
 			free_exit(global.pipex, NULL, fd_out, NULL);
 		global.pipex[0] = close_bf(global.pipex[0]);

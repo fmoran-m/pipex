@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 16:11:05 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/03/05 16:17:15 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/03/05 17:01:08 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,28 +25,19 @@ int	open_infile(char *infile, int *pipex)
 
 	if (access(infile, F_OK) != 0)
 		free_exit(pipex, NULL, 0, ACC_ERR);
-	fd = open(infile, O_RDONLY, 0664);
+	fd = open(infile, O_RDONLY);
 	if (fd == -1)
 		free_exit(pipex, NULL, 0, OPEN_ERR);
 	return (fd);
 }
 
-int	open_outfile(char *outfile, int *pipex, int here_doc)
+int	open_outfile(char *outfile, int *pipex)
 {
 	int	fd;
 
-	if (here_doc == 1)
-	{
-		fd = open(outfile, O_WRONLY | O_APPEND, O_CREAT, 0644);
-		if (fd == -1)
-			free_exit(pipex, NULL, 0, OPEN_ERR);
-	}
-	else
-	{
-		fd = open(outfile, O_WRONLY | O_TRUNC | O_CREAT, 0644);
-		if (fd == -1)
-			free_exit(pipex, NULL, 0, OPEN_ERR);
-	}
+	fd = open(outfile, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	if (fd == -1)
+		free_exit(pipex, NULL, 0, OPEN_ERR);
 	return (fd);
 }
 
