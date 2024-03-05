@@ -6,7 +6,7 @@ int	open_infile(char *infile, int *pipex)
 
 	if (access(infile, F_OK) != 0)
 		free_exit(pipex, NULL, 0, ACC_ERR);
-	fd = open(infile, O_RDWR);
+	fd = open(infile, O_RDONLY, 0664);
 	if (fd == -1)
 		free_exit(pipex, NULL, 0, OPEN_ERR);
 	return (fd);
@@ -18,13 +18,13 @@ int	open_outfile(char *outfile, int *pipex, int here_doc)
 
 	if (here_doc == 1)
 	{
-		fd = open(outfile, O_RDWR | O_APPEND, O_CREAT, 0777);
+		fd = open(outfile, O_WRONLY | O_APPEND, O_CREAT, 0644);
 		if (fd == -1)
 			free_exit(pipex, NULL, 0, OPEN_ERR);
 	}
 	else
 	{
-		fd = open(outfile, O_RDWR | O_TRUNC | O_CREAT, 0777);
+		fd = open(outfile, O_WRONLY | O_TRUNC | O_CREAT, 0644);
 		if (fd == -1)
 			free_exit(pipex, NULL, 0, OPEN_ERR);
 	}
