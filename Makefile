@@ -28,11 +28,11 @@ INCLUDES_BONUS = pipex_bonus.h
 
 RM = rm -f
 
-SRC = main.c exit_functions.c childs.c path.c
+SRC = main.c exit_functions.c childs.c path.c open_files.c
 
 OBJS = ${SRC:.c=.o}
 
-BONUS = main_bonus.c exit_functions_bonus.c childs_bonus.c path_bonus.c
+BONUS = main_bonus.c exit_functions_bonus.c childs_bonus.c path_bonus.c pipe_loop_bonus.c open_bonus.c
 
 BONUS_OBJS = ${BONUS:.c=.o}
 

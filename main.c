@@ -28,10 +28,7 @@ int	main(int argc, char **argv, char **env)
 
 	argc_control(argc);
 	if (pipe(pipex) == -1)
-	{
-		perror(NULL);
-		return (1);
-	}
+		free_exit(NULL, NULL, 0, NULL);
 	exec_first_process(pipex, argv, env);
 	wait(&status);
 	exec_last_process(pipex, argv, env);

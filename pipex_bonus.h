@@ -17,11 +17,6 @@
 # include <unistd.h>
 # include <sys/wait.h>
 # include "libft/libft.h"
-typedef struct s_global
-{
-	int pipex[2];
-	int	here_doc;
-} t_global;
 
 # define PATH		"PATH="
 # define ARGC_ERR	"Incorrect number of arguments"
@@ -30,7 +25,21 @@ typedef struct s_global
 # define OPEN_ERR	"Open error"
 # define CMD_ERR	"Command does not exist"
 # define MEM_ERR	"Memory allocation error"
+# define HDOC_FILE	".here_doc.txt"
 
+typedef struct s_global
+{
+	int pipex[2];
+	int	here_doc;
+} t_global;
+typedef struct s_temp
+{
+	char 	*path;
+	pid_t	pid;
+	int		status;
+	int		new[2];
+	int		i;
+} t_temp;
 void		argc_control(int argc, int here_doc);
 void		exec_first_process(t_global global, char **argv, char **env);
 void		exec_last_process(t_global global, char **argv, char **env, int argc);
