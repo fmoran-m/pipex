@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:38 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/03/01 21:07:31 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/03/06 14:51:47 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ int	main(int argc, char **argv, char **env)
 	global = pipe_loop(global, argv, env, argc);
 	exec_last_process(global, argv, env, argc);
 	wait(&status);
+	close(global.pipex[0]);
 	if (status != 0)
 		return (1);
 	return (0);

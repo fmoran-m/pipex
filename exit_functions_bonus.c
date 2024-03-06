@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:35 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/03/05 16:10:24 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/03/06 15:03:13 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 void	free_exit(int *pipex, char *path, int file_fd, char *error)
 {
 	perror(error);
-	if (pipex[0] != -1)
+	if (pipex && pipex[0] != -1)
 		close(pipex[0]);
-	if (pipex[1] != -1)
+	if (pipex && pipex[1] != -1)
 		close(pipex[1]);
 	if (path)
 		free(path);
@@ -43,9 +43,9 @@ void	exit_path_err(char **path, char *command, int *pipex)
 void	free_exit_err(int *pipex, char *path, int file_fd, char *error)
 {
 	ft_putendl_fd(error, 2);
-	if (pipex[0] != -1)
+	if (pipex && pipex[0] != -1)
 		close(pipex[0]);
-	if (pipex[1] != -1)
+	if (pipex && pipex[1] != -1)
 		close(pipex[1]);
 	if (path)
 		free(path);
