@@ -31,13 +31,22 @@ int	open_infile(char *infile, int *pipex)
 	return (fd);
 }
 
-int	open_outfile(char *outfile, int *pipex)
+int	open_outfile(char *outfile, int *pipex, int here_doc)
 {
 	int	fd;
 
-	fd = open(outfile, O_WRONLY | O_TRUNC | O_CREAT, 0644);
-	if (fd == -1)
-		free_exit(pipex, NULL, 0, OPEN_ERR);
+	if (here_doc == 1)
+	{
+		fd = open(outfile, O_WRONLY | O_APPEND | O_CREAT, 0644);
+		if (fd == -1)
+			free_exit(pipex, NULL, 0, OPEN_ERR);
+	}
+	else
+	{
+		fd = open(outfile, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+		if (fd == -1)
+			free_exit(pipex, NULL, 0, OPEN_ERR);
+	}
 	return (fd);
 }
 

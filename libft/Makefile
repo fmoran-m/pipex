@@ -4,7 +4,7 @@ FLAGS := -Wall -Wextra -Werror
 
 RM = rm -f
 
-CC = gcc
+CC = cc
 
 AR = ar rcs
 

@@ -45,7 +45,7 @@ void		exec_first_process(t_global global, char **argv, char **env);
 void		exec_last_process(t_global global,
 				char **argv, char **env, int argc);
 int			open_infile(char *infile, int *pipex);
-int			open_outfile(char *outfile, int *pipex);
+int			open_outfile(char *outfile, int *pipex, int here_doc);
 void		exec_cmd(char *path, char *argv, char **env);
 void		free_exit(int *pipex, char *path, int file_fd, char *error);
 void		free_exit_err(int *pipex, char *path, int file_fd, char *error);

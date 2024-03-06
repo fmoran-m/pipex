@@ -93,7 +93,7 @@ void	exec_last_process(t_global global, char **argv, char **env, int argc)
 		free_exit(global.pipex, NULL, 0, NULL);
 	if (pid == 0)
 	{
-		fd_out = open_outfile(argv[argc - 1], global.pipex);
+		fd_out = open_outfile(argv[argc - 1], global.pipex, global.here_doc);
 		if (dup2(global.pipex[0], STDIN_FILENO) == -1)
 			free_exit(global.pipex, NULL, fd_out, NULL);
 		global.pipex[0] = close_bf(global.pipex[0]);

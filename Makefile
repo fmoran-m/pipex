@@ -38,7 +38,7 @@ BONUS_OBJS = ${BONUS:.c=.o}
 
 $(NAME): $(OBJS) $(INCLUDES)
 		$(RM) $(BONUS_OBJS)
-		@$(LM) $(LIBFTDIR)
+		$(LM) $(LIBFTDIR)
 		$(CC) -o $(NAME) $(CFLAGS) $(OBJS) $(LIBFT)
 
 all: $(NAME)
@@ -48,16 +48,16 @@ all: $(NAME)
 
 bonus: $(BONUS_OBJS) $(INCLUDE_BONUS)
 		$(RM) $(OBJS)
-		@$(LM) $(LIBFTDIR)
+		$(LM) $(LIBFTDIR)
 		$(CC) -o $(NAME) $(CFLAGS) $(BONUS_OBJS) $(LIBFT)
 
 clean:
-		@$(RM) $(BONUS_OBJS) $(OBJS)
-		@cd $(LIBFTDIR) && make clean
+		$(RM) $(BONUS_OBJS) $(OBJS)
+		cd $(LIBFTDIR) && make clean
 
 fclean: clean
-		@$(RM) $(NAME)
-		@cd $(LIBFTDIR) && make fclean
+		$(RM) $(NAME)
+		cd $(LIBFTDIR) && make fclean
 
 re: fclean all
 
