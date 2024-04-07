@@ -30,7 +30,6 @@ int	main(int argc, char **argv, char **env)
 	if (pipe(pipex) == -1)
 		free_exit(NULL, NULL, 0, NULL);
 	exec_first_process(pipex, argv, env);
-	wait(&status);
 	exec_last_process(pipex, argv, env);
 	wait(&status);
 	close(pipex[0]);

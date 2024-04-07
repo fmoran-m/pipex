@@ -49,7 +49,6 @@ int	main(int argc, char **argv, char **env)
 	if (pipe(global.pipex) == -1)
 		free_exit(NULL, NULL, 0, NULL);
 	exec_first_process(global, argv, env);
-	wait(&status);
 	global = pipe_loop(global, argv, env, argc);
 	exec_last_process(global, argv, env, argc);
 	wait(&status);
