@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:32 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 17:04:43 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/04/09 13:25:32 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,14 @@ void	exec_first_process(int *pipex, char **argv, char **env)
 	if (pid == 0)
 	{
 		fd_infile = open_infile(argv[1], pipex);
-		path = get_path(argv[2], env, pipex, fd_infile);
-		close(pipex[0]);
-		if (dup2(fd_infile, 0) == -1)
-			free_exit(pipex, path, fd_infile, NULL);
+		pipex[0] = close_bf(pipex[0]);
+		if (dup2(fd_infile, STDIN_FILENO) == -1)
+			free_exit(pipex, NULL, fd_infile, NULL);
 		close(fd_infile);
-		if (dup2(pipex[1], 1) == -1)
-			free_exit(pipex, path, fd_infile, NULL);
-		close(pipex[0]);
+		if (dup2(pipex[1], STDOUT_FILENO) == -1)
+			free_exit(pipex, NULL, 0, NULL);
+		pipex[1] = close_bf(pipex[1]);
+		path = get_path(argv[2], env, NULL);
 		exec_cmd(path, argv[2], env);
 	}
 }
@@ -62,23 +62,21 @@ void	exec_last_process(int *pipex, char **argv, char **env)
 	char	*path;
 	int		fd_outfile;
 
-	close(pipex[1]);
+	pipex[1] = close_bf(pipex[1]);
 	fd_outfile = 0;
 	pid = fork();
 	if (pid == -1)
-	{
-		perror(NULL);
-		exit(1);
-	}
+		free_exit(pipex, NULL, 0, NULL);
 	if (pid == 0)
 	{
 		fd_outfile = open_outfile(argv[4], pipex);
-		path = get_path(argv[3], env, pipex, fd_outfile);
-		if (dup2(pipex[0], 0) == -1)
-			free_exit(pipex, path, fd_outfile, NULL);
-		close(pipex[0]);
-		if (dup2(fd_outfile, 1) == -1)
-			free_exit(pipex, path, fd_outfile, NULL);
+		if (dup2(pipex[0], STDIN_FILENO) == -1)
+			free_exit(pipex, NULL, fd_outfile, NULL);
+		pipex[0] = close_bf(pipex[0]);
+		if (dup2(fd_outfile, STDOUT_FILENO) == -1)
+			free_exit(NULL, NULL, fd_outfile, NULL);
+		close(fd_outfile);
+		path = get_path(argv[3], env, NULL);
 		exec_cmd(path, argv[3], env);
 	}
 }

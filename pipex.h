@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:42 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 15:56:08 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/04/09 13:27:05 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,9 @@ void	exec_cmd(char *path, char *argv, char **env);
 void	free_exit(int *pipex, char *path, int file_fd, char *error);
 void	free_exit_err(int *pipex, char *path, int file_fd, char *error);
 void	free_matrix(char **matrix);
-char	*get_path(char *argv, char **env, int *pipex, int file_fd);
-void	exit_path(char **path, char *command, int *pipex, int file_fd);
-void	exit_path_err(char **path, char *command, int *pipex, int file_fd);
+char	*get_path(char *argv, char **env, int *pipex);
+void	exit_path(char **path, char *command, int *pipex);
+void	exit_path_err(char **path, char *command, int *pipex);
 void	free_exit_err(int *pipex, char *path, int file_fd, char *error);
+int		close_bf(int fd);
 #endif

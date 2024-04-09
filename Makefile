@@ -6,7 +6,7 @@
 #    By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/27 15:41:45 by fmoran-m          #+#    #+#              #
-#    Updated: 2024/02/28 16:57:06 by fmoran-m         ###   ########.fr        #
+#    Updated: 2024/04/09 13:26:16 by fmoran-m         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,14 +32,14 @@ SRC = main.c exit_functions.c childs.c path.c open_files.c
 
 OBJS = ${SRC:.c=.o}
 
-BONUS = main_bonus.c exit_functions_bonus.c childs_bonus.c path_bonus.c open_files_bonus.c
+BONUS = main_bonus.c exit_functions_bonus.c childs_bonus.c path_bonus.c pipe_loop_bonus.c open_bonus.c
 
 BONUS_OBJS = ${BONUS:.c=.o}
 
 $(NAME): $(OBJS) $(INCLUDES)
 		$(RM) $(BONUS_OBJS)
-		@$(LM) $(LIBFTDIR)
-		$(CC) -o $(NAME) $(CFLAGS) -fsanitize=address $(OBJS) $(LIBFT)
+		$(LM) $(LIBFTDIR)
+		$(CC) -o $(NAME) $(CFLAGS) $(OBJS) $(LIBFT)
 
 all: $(NAME)
 
@@ -48,16 +48,16 @@ all: $(NAME)
 
 bonus: $(BONUS_OBJS) $(INCLUDE_BONUS)
 		$(RM) $(OBJS)
-		@$(LM) $(LIBFTDIR)
-		$(CC) -o $(NAME) $(CFLAGS) -fsanitize=address $(BONUS_OBJS) $(LIBFT)
+		$(LM) $(LIBFTDIR)
+		$(CC) -o $(NAME) $(CFLAGS) $(BONUS_OBJS) $(LIBFT)
 
 clean:
-		@$(RM) $(BONUS_OBJS) $(OBJS)
-		@cd $(LIBFTDIR) && make clean
+		$(RM) $(BONUS_OBJS) $(OBJS)
+		cd $(LIBFTDIR) && make clean
 
 fclean: clean
-		@$(RM) $(NAME)
-		@cd $(LIBFTDIR) && make fclean
+		$(RM) $(NAME)
+		cd $(LIBFTDIR) && make fclean
 
 re: fclean all
 

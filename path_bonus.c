@@ -6,31 +6,31 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:40 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 16:54:45 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/04/09 13:26:48 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-static char	*get_command(char *argv, int *pipex, int fd_file)
+static char	*get_command(char *argv, int *pipex)
 {
 	char	*command;
 	char	**temp;
 
 	temp = ft_split(argv, ' ');
 	if (!temp)
-		free_exit(pipex, NULL, fd_file, NULL);
+		free_exit(pipex, NULL, 0, NULL);
 	command = ft_strjoin("/", temp[0]);
 	if (!command)
 	{
 		free_matrix(temp);
-		free_exit(pipex, NULL, fd_file, NULL);
+		free_exit(pipex, NULL, 0, NULL);
 	}
 	free_matrix(temp);
 	return (command);
 }
 
-static char	*get_path_env(char **env, char *command, int *pipex, int fd_file)
+static char	*get_path_env(char **env, char *command, int *pipex)
 {
 	int		i;
 	char	*mod_env;
@@ -41,13 +41,13 @@ static char	*get_path_env(char **env, char *command, int *pipex, int fd_file)
 	if (!env[i])
 	{
 		free(command);
-		free_exit(pipex, NULL, fd_file, PATH_ERR);
+		free_exit(pipex, NULL, 0, PATH_ERR);
 	}
 	mod_env = env[i] + 5;
 	return (mod_env);
 }
 
-static char	*get_def_path(char **path, char *command, int *pipex, int fd_file)
+static char	*get_def_path(char **path, char *command, int *pipex)
 {
 	int		i;
 	int		found;
@@ -59,7 +59,7 @@ static char	*get_def_path(char **path, char *command, int *pipex, int fd_file)
 	{
 		search = ft_strjoin(path[i], command);
 		if (!search)
-			exit_path_err(path, command, pipex, fd_file);
+			exit_path_err(path, command, pipex);
 		if (access(search, X_OK) == 0)
 			found = 1;
 		else
@@ -69,11 +69,11 @@ static char	*get_def_path(char **path, char *command, int *pipex, int fd_file)
 		}
 	}
 	if (!found)
-		exit_path(path, command, pipex, fd_file);
+		exit_path(path, command, pipex);
 	return (search);
 }
 
-char	*get_path(char *argv, char **env, int *pipex, int fd_file)
+char	*get_path(char *argv, char **env, int *pipex)
 {
 	char	**path;
 	char	*temp;
@@ -81,20 +81,19 @@ char	*get_path(char *argv, char **env, int *pipex, int fd_file)
 	char	*command;
 
 	if (!*argv)
-		free_exit_err(pipex, NULL, fd_file, CMD_ERR);
+		free_exit(pipex, NULL, 0, CMD_ERR);
 	if (access(argv, X_OK) == 0)
 		return (argv);
-	command = get_command(argv, pipex, fd_file);
-	temp = get_path_env(env, command, pipex, fd_file);
+	command = get_command(argv, pipex);
+	temp = get_path_env(env, command, pipex);
 	path = ft_split(temp, ':');
-	ft_putendl_fd(path[0], 2);
 	if (!path)
 	{
 		free(command);
 		free(temp);
-		free_exit(pipex, NULL, fd_file, NULL);
+		free_exit(pipex, NULL, 0, NULL);
 	}
-	search = get_def_path(path, command, pipex, fd_file);
+	search = get_def_path(path, command, pipex);
 	free(command);
 	free_matrix(path);
 	return (search);

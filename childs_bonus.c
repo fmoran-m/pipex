@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:32 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/28 16:42:31 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/04/09 13:25:19 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ void	exec_cmd(char *path, char *argv, char **env)
 	cmd = ft_split(argv, ' ');
 	if (!cmd)
 		free_exit(NULL, path, 0, NULL);
-//	ft_putendl_fd(path, 2);
-	//ft_putendl_fd(cmd[0], 2);
 	if (execve(path, cmd, env) == -1)
 	{
 		perror(NULL);
@@ -30,38 +28,48 @@ void	exec_cmd(char *path, char *argv, char **env)
 	}
 }
 
-void	open_here_doc(char *limiter, int *pipex)
+static void	free_exit_unlink(int *pipex, int file_fd, int here_doc)
 {
-	int	fd;
-	char *buffer;
-
-	buffer = NULL;
-	fd = open(".here_doc.txt", O_CREAT | O_WRONLY | O_APPEND, 0644);
-	if (fd == -1)
-	{
+	if (pipex[0] != -1)
 		close(pipex[0]);
+	if (pipex[1] != -1)
 		close(pipex[1]);
-		perror(OPEN_ERR);
-		exit(1);
-	}
-	while(1)
-	{
-		ft_printf("> ");
-		buffer = get_next_line(0);
-		write(fd, buffer, ft_strlen(buffer));
-		if (!ft_strncmp(buffer, limiter, ft_strlen(limiter)))
-			break;
-	}
-	close(fd);
+	if (file_fd)
+		close(file_fd);
+	if (here_doc)
+		unlink(HDOC_FILE);
+	exit(1);
 }
 
-void	exec_first_process(int *pipex, char **argv, char **env, int here_doc)
+static void	in_child(t_global global, char **argv, char **env)
 {
-	pid_t	pid;
-	char	*path;
 	int		fd_infile;
+	char	*path;
 
-	fd_infile = 0;
+	if (global.here_doc == 1)
+	{
+		open_here_doc(argv[2], global.pipex);
+		fd_infile = open_infile(HDOC_FILE, global.pipex);
+	}
+	else
+		fd_infile = open_infile(argv[1], global.pipex);
+	global.pipex[0] = close_bf(global.pipex[0]);
+	if (dup2(fd_infile, STDIN_FILENO) == -1)
+		free_exit_unlink(global.pipex, fd_infile, global.here_doc);
+	close(fd_infile);
+	if (global.here_doc)
+		unlink(HDOC_FILE);
+	if (dup2(global.pipex[1], STDOUT_FILENO) == -1)
+		free_exit(global.pipex, NULL, 0, NULL);
+	global.pipex[1] = close_bf(global.pipex[1]);
+	path = get_path(argv[2 + global.here_doc], env, NULL);
+	exec_cmd(path, argv[2 + global.here_doc], env);
+}
+
+void	exec_first_process(t_global global, char **argv, char **env)
+{
+	pid_t	pid;
+
 	pid = fork();
 	if (pid == -1)
 	{
@@ -69,50 +77,30 @@ void	exec_first_process(int *pipex, char **argv, char **env, int here_doc)
 		exit(1);
 	}
 	if (pid == 0)
-	{
-		if (here_doc == 1)
-		{
-			open_here_doc(argv[2], pipex);
-			fd_infile = open_infile(".here_doc.txt", pipex);
-		}
-		else
-			fd_infile = open_infile(argv[1], pipex);
-		path = get_path(argv[2 + here_doc], env, pipex, fd_infile);
-		close(pipex[0]);
-		if (dup2(fd_infile, 0) == -1)
-			free_exit(pipex, path, fd_infile, NULL);
-		close(fd_infile);
-		if (dup2(pipex[1], 1) == -1)
-			free_exit(pipex, path, fd_infile, NULL);
-		close(pipex[0]);
-		exec_cmd(path, argv[2 + here_doc], env);
-	}
+		in_child(global, argv, env);
 }
 
-void	exec_last_process(int *pipex, char **argv, char **env)
+void	exec_last_process(t_global global, char **argv, char **env, int argc)
 {
 	pid_t	pid;
 	char	*path;
-	int		fd_outfile;
+	int		fd_out;
 
-	close(pipex[1]);
-	fd_outfile = 0;
+	global.pipex[1] = close_bf(global.pipex[1]);
+	fd_out = 0;
 	pid = fork();
 	if (pid == -1)
-	{
-		perror(NULL);
-		exit(1);
-	}
+		free_exit(global.pipex, NULL, 0, NULL);
 	if (pid == 0)
 	{
-		fd_outfile = open_outfile(argv[5], pipex);
-		path = get_path(argv[4], env, pipex, fd_outfile);
-		if (dup2(pipex[0], 0) == -1)
-			free_exit(pipex, path, fd_outfile, NULL);
-		close(pipex[0]);
-		if (dup2(fd_outfile, 1) == -1)
-			free_exit(pipex, path, fd_outfile, NULL);
-		close(fd_outfile);
-		exec_cmd(path, argv[4], env);
+		fd_out = open_outfile(argv[argc - 1], global.pipex, global.here_doc);
+		if (dup2(global.pipex[0], STDIN_FILENO) == -1)
+			free_exit(global.pipex, NULL, fd_out, NULL);
+		global.pipex[0] = close_bf(global.pipex[0]);
+		if (dup2(fd_out, STDOUT_FILENO) == -1)
+			free_exit(global.pipex, NULL, fd_out, NULL);
+		close(fd_out);
+		path = get_path(argv[argc - 2], env, NULL);
+		exec_cmd(path, argv[argc - 2], env);
 	}
 }

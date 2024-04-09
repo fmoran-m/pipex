@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:38 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/27 22:29:15 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/04/09 13:26:02 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,11 @@ int	main(int argc, char **argv, char **env)
 
 	argc_control(argc);
 	if (pipe(pipex) == -1)
-	{
-		perror(NULL);
-		return (1);
-	}
+		free_exit(NULL, NULL, 0, NULL);
 	exec_first_process(pipex, argv, env);
-	wait(&status);
 	exec_last_process(pipex, argv, env);
 	wait(&status);
+	close(pipex[0]);
 	if (status != 0)
 		return (1);
 	return (0);

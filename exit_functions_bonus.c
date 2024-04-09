@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:35 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/02/27 19:57:18 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/04/09 13:25:46 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,23 +21,23 @@ void	free_exit(int *pipex, char *path, int file_fd, char *error)
 		close(pipex[1]);
 	if (path)
 		free(path);
-	if (file_fd && file_fd != -1)
+	if (file_fd)
 		close(file_fd);
 	exit(1);
 }
 
-void	exit_path(char **path, char *command, int *pipex, int fd_file)
+void	exit_path(char **path, char *command, int *pipex)
 {
 	free_matrix(path);
 	free(command);
-	free_exit(pipex, NULL, fd_file, CMD_ERR);
+	free_exit(pipex, NULL, 0, CMD_ERR);
 }
 
-void	exit_path_err(char **path, char *command, int *pipex, int fd_file)
+void	exit_path_err(char **path, char *command, int *pipex)
 {
 	free_matrix(path);
 	free(command);
-	free_exit_err(pipex, NULL, fd_file, MEM_ERR);
+	free_exit_err(pipex, NULL, 0, MEM_ERR);
 }
 
 void	free_exit_err(int *pipex, char *path, int file_fd, char *error)
@@ -49,7 +49,7 @@ void	free_exit_err(int *pipex, char *path, int file_fd, char *error)
 		close(pipex[1]);
 	if (path)
 		free(path);
-	if (file_fd && file_fd != -1)
+	if (file_fd)
 		close(file_fd);
 	exit(1);
 }
