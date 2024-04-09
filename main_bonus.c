@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:38 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/04/09 14:28:58 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/04/09 19:04:05 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,22 @@ int	check_here_doc(char **argv)
 	return (flag);
 }
 
+int	wait_loop(t_global global, int status)
+{
+	while(global.iterator > 0)
+	{
+		wait(&status);
+		global.iterator--;
+	}
+	return (status);
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	int			status;
 	t_global	global;
 
+	status = 0;
 	global.here_doc = check_here_doc(argv);
 	argc_control(argc, global.here_doc);
 	if (pipe(global.pipex) == -1)
@@ -51,13 +62,13 @@ int	main(int argc, char **argv, char **env)
 	exec_first_process(global, argv, env);
 	global = pipe_loop(global, argv, env, argc);
 	exec_last_process(global, argv, env, argc);
-	wait(&status);
 	close(global.pipex[0]);
+	wait_loop(global, status);
 	if (status != 0)
 	{
 		if (global.here_doc == 1)
 			unlink(HDOC_FILE);
-		return (1);
+		return (127);
 	}
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:42 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/04/09 13:26:59 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/04/09 19:03:43 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef struct s_global
 {
 	int	pipex[2];
 	int	here_doc;
+	int	iterator;
 }	t_global;
 typedef struct s_temp
 {
@@ -58,4 +59,5 @@ int			check_here_doc(char **argv);
 void		open_here_doc(char *limiter, int *pipex);
 t_global	pipe_loop(t_global global, char **argv, char **env, int argc);
 int			close_bf(int fd);
+int			wait_loop(t_global global, int status);
 #endif

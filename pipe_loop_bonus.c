@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 16:24:14 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/03/06 14:52:21 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/04/09 19:05:46 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ t_global	pipe_loop(t_global global, char **argv, char **env, int argc)
 	t_temp	temp;
 
 	temp.i = 3 + global.here_doc;
+	global.iterator = 2;
 	while (temp.i < argc - 2)
 	{
 		if (pipe(temp.new) == -1)
@@ -51,11 +52,11 @@ t_global	pipe_loop(t_global global, char **argv, char **env, int argc)
 		}
 		if (temp.pid == 0)
 			loop_child(global, temp, argv, env);
-		wait(&temp.status);
 		close(global.pipex[0]);
 		global.pipex[0] = temp.new[0];
 		global.pipex[1] = temp.new[1];
 		temp.i++;
+		global.iterator++;
 	}
 	return (global);
 }
