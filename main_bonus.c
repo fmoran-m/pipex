@@ -6,7 +6,7 @@
 /*   By: fmoran-m <fmoran-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 15:41:38 by fmoran-m          #+#    #+#             */
-/*   Updated: 2024/04/09 13:25:57 by fmoran-m         ###   ########.fr       */
+/*   Updated: 2024/04/09 14:28:58 by fmoran-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,10 @@ int	main(int argc, char **argv, char **env)
 	wait(&status);
 	close(global.pipex[0]);
 	if (status != 0)
+	{
+		if (global.here_doc == 1)
+			unlink(HDOC_FILE);
 		return (1);
+	}
 	return (0);
 }
